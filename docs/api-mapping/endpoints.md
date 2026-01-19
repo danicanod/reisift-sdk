@@ -40,10 +40,12 @@
 | Status | Method | Endpoint | Description | SDK method |
 |--------|--------|----------|-------------|------------|
 | ✅ | `POST` | `/api/internal/property/` | Search/list properties | `searchProperties()` |
+| ✅ | `POST` | `/api/internal/property/` | Create new property | `createProperty()` |
 | ✅ | `GET` | `/api/internal/property/{uuid}/` | Get single property | `getPropertyById()` |
 | ✅ | `GET` | `/api/internal/property/{uuid}/image/` | Get property images | `getPropertyImages()` |
 | ✅ | `GET` | `/api/internal/property/{uuid}/offer/` | Get property offers | `getPropertyOffers()` |
 | ✅ | `POST` | `/api/internal/property/address-info-from-map-id/` | Get property info from map ID | `getAddressInfoFromMapId()` |
+| ✅ | - | - | Ensure property exists by map ID | `ensurePropertyByMapId()` |
 | 📋 | `POST` | `/api/internal/property/{uuid}/next/` | Get next property | - |
 | 📋 | `POST` | `/api/internal/property/{uuid}/prev/` | Get previous property | - |
 | 📋 | `GET` | `/api/internal/property/{uuid}/deal/` | Get property deal | - |
@@ -66,11 +68,56 @@
 
 Note: Uses `x-http-method-override: GET` header with POST request.
 
+### Create property request structure
+```json
+{
+  "address": {
+    "street": "191 MAIN ST UNIT 3",
+    "city": "NEW CANAAN",
+    "state": "CT",
+    "postal_code": "06840-5641"
+  },
+  "assigned_to": "uuid-of-user",
+  "status": "Working On It",
+  "lists": ["Mortgage Auctions"],
+  "tags": ["Courthouse", "Mortgage Auctions 01/2026"],
+  "notes": "Optional notes",
+  "owner": {
+    "first_name": "John",
+    "last_name": "Doe",
+    "company": null,
+    "address": { ... }
+  }
+}
+```
+
+### ensurePropertyByMapId workflow
+
+The `ensurePropertyByMapId(mapId, options?)` helper implements:
+
+1. Call `getAddressInfoFromMapId(mapId)` to check if property exists
+2. If `saved_property_uuid` is returned, fetch and return the existing property
+3. Otherwise, create a new property using the normalized address (and optionally owner) from the lookup
+
+```typescript
+// Example usage
+const results = await client.searchAutocomplete("328 Main St, New Canaan, CT");
+const mapId = results[0].id;
+
+// Get existing or create new property
+const property = await client.ensurePropertyByMapId(mapId, {
+  assigned_to: "user-uuid",
+  status: "New Lead",
+  lists: ["My List"],
+  tags: ["Tag1"],
+});
+```
+
 ## User & account
 
 | Status | Method | Endpoint | Description | SDK method |
 |--------|--------|----------|-------------|------------|
-| 📋 | `GET` | `/api/internal/user/` | Get current user info | - |
+| ✅ | `GET` | `/api/internal/user/` | Get current user info | `getCurrentUser()` |
 | 📋 | `GET` | `/api/internal/account/user/` | List account users | - |
 
 ## Owners
@@ -157,7 +204,7 @@ Returns an array of matching addresses with map IDs that can be used with `getAd
 
 ## Endpoints to explore
 
-- [ ] `POST /api/internal/property/` - Create property
+- [x] `POST /api/internal/property/` - Create property (`createProperty()`)
 - [ ] `PATCH /api/internal/property/{uuid}/` - Update property
 - [ ] `DELETE /api/internal/property/{uuid}/` - Delete property
 - [ ] `POST /api/internal/list/` - Create list

@@ -1,5 +1,6 @@
 #!/usr/bin/env tsx
 
+import 'dotenv/config';
 import { ReisiftClient } from '../src/infrastructure/services/reisift-client.js';
 
 async function main() {
@@ -71,6 +72,38 @@ async function main() {
       console.log(`   ✓ Found ${offers.count} offers\n`);
     } else {
       console.log('6-8. Skipped (no properties found to test with)\n');
+    }
+
+    // Test new map ID / property creation flow
+    const testAddress = '328 Main St, New Canaan, CT';
+    console.log(`9. Testing searchAutocomplete("${testAddress}")...`);
+    const autocompleteResults = await client.searchAutocomplete(testAddress);
+    console.log(`   ✓ Found ${autocompleteResults.length} autocomplete results`);
+    
+    if (autocompleteResults.length > 0) {
+      const firstResult = autocompleteResults[0];
+      const mapId = firstResult.id;
+      console.log(`   First result: ${firstResult.title ?? firstResult.address} (id: ${mapId})\n`);
+
+      if (mapId) {
+        console.log(`10. Testing getAddressInfoFromMapId("${mapId}")...`);
+        const addressInfo = await client.getAddressInfoFromMapId(mapId);
+        console.log(`   ✓ Address: ${addressInfo.address?.street}, ${addressInfo.address?.city}, ${addressInfo.address?.state}`);
+        console.log(`   ✓ Owner: ${addressInfo.owner?.first_name ?? 'N/A'} ${addressInfo.owner?.last_name ?? ''}`);
+        console.log(`   ✓ Saved property UUID: ${addressInfo.saved_property_uuid ?? 'None (new address)'}\n`);
+
+        console.log(`11. Testing ensurePropertyByMapId("${mapId}")...`);
+        const ensuredProperty = await client.ensurePropertyByMapId(mapId, {
+          status: 'New Lead',
+          includeOwner: true,
+        });
+        console.log(`   ✓ Property ensured: ${ensuredProperty.uuid}`);
+        console.log(`   ✓ Address: ${ensuredProperty.address?.street ?? ensuredProperty.address?.full_address}\n`);
+      } else {
+        console.log('10-11. Skipped (no map ID in autocomplete result)\n');
+      }
+    } else {
+      console.log('9-11. Skipped (no autocomplete results)\n');
     }
 
     console.log('======================');

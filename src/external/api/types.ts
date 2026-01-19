@@ -166,22 +166,96 @@ export interface AddressInfoFromMapIdRequest {
   map_id: string;
 }
 
-export interface AddressInfoFromMapIdResponse {
-  map_id?: string;
-  address?: string;
+/** Address structure returned from map ID lookup and used in property creation */
+export interface MapIdAddress {
   street?: string;
   city?: string;
   state?: string;
-  zip?: string;
+  postal_code?: string;
+  country?: string;
   county?: string;
   latitude?: number;
   longitude?: number;
-  property_type?: string;
-  bedrooms?: number;
-  bathrooms?: number;
-  square_feet?: number;
-  lot_size?: number;
-  year_built?: number;
-  estimated_value?: number;
+  vacant?: boolean;
+  invalid_address?: boolean | null;
+  utc?: unknown;
+  active?: unknown;
+}
+
+/** Owner info returned from map ID lookup */
+export interface MapIdOwner {
+  first_name?: string;
+  last_name?: string;
+  company?: string | null;
+  address?: MapIdAddress;
+}
+
+export interface AddressInfoFromMapIdResponse {
+  /** Normalized address from the map lookup */
+  address?: MapIdAddress;
+  /** Owner information if available */
+  owner?: MapIdOwner;
+  /** UUID of an existing property if already saved in Reisift */
+  saved_property_uuid?: string;
   [key: string]: unknown;
+}
+
+// ============================================================================
+// Create Property
+// ============================================================================
+
+/** Address for creating a property (minimal required fields) */
+export interface CreatePropertyAddress {
+  street: string;
+  city: string;
+  state: string;
+  postal_code: string;
+  country?: string;
+}
+
+/** Owner info for creating a property */
+export interface CreatePropertyOwner {
+  first_name?: string;
+  last_name?: string;
+  company?: string | null;
+  address?: CreatePropertyAddress;
+  emails?: string[];
+  emails_info?: Record<string, unknown>;
+  primary_email?: string | null;
+  phones?: string[];
+  primary_phone?: string | null;
+}
+
+/** Request payload for creating a new property */
+export interface CreatePropertyRequest {
+  /** Property address (required) */
+  address: CreatePropertyAddress;
+  /** UUID of user to assign the property to */
+  assigned_to?: string;
+  /** Property status (e.g., "Working On It", "New Lead", etc.) */
+  status?: string;
+  /** Lists to add the property to */
+  lists?: string[];
+  /** Tags to apply to the property */
+  tags?: string[];
+  /** Notes about the property */
+  notes?: string;
+  /** Owner information */
+  owner?: CreatePropertyOwner;
+}
+
+/** Options for ensurePropertyByMapId helper */
+export interface EnsurePropertyOptions {
+  /** UUID of user to assign the property to (if creating) */
+  assigned_to?: string;
+  /** Property status (if creating) */
+  status?: string;
+  /** Lists to add the property to (if creating) */
+  lists?: string[];
+  /** Tags to apply (if creating) */
+  tags?: string[];
+  /** Notes (if creating) */
+  notes?: string;
+  /** Whether to include owner info from map lookup when creating (default: true) */
+  includeOwner?: boolean;
 }
