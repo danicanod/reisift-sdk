@@ -1,0 +1,41 @@
+{
+  "name": "@reisift/sdk",
+  "version": "0.1.0",
+  "description": "TypeScript SDK for the Reisift API",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "build:check": "tsc --noEmit",
+    "prepublishOnly": "npm run build",
+    "parse-har": "tsx scripts/parse-har.ts",
+    "smoke-test": "tsx scripts/smoke-test.ts"
+  },
+  "keywords": [
+    "reisift",
+    "api",
+    "sdk",
+    "typescript"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.5.0"
+  },
+  "dependencies": {}
+}
