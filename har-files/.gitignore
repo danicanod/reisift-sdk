@@ -1,0 +1,3 @@
+# HAR files contain sensitive data (auth tokens, cookies, etc.)
+*.har
+archive/
