@@ -12,6 +12,8 @@ import type {
   SearchAutocompleteResponse,
   AddressInfoFromMapIdResponse,
   UserResponse,
+  CreatePropertyRequest,
+  EnsurePropertyOptions,
 } from '../../external/api/types.js';
 import { logger } from '../../shared/logger.js';
 
@@ -236,6 +238,17 @@ export class ReisiftClient implements ReisiftClientInterface {
     return this.accessToken !== null;
   }
 
+  getTokens(): { accessToken: string | null; refreshToken: string | null } {
+    return {
+      accessToken: this.accessToken,
+      refreshToken: this.refreshToken,
+    };
+  }
+
+  getAccessToken(): string | null {
+    return this.accessToken;
+  }
+
   async getDashboard(): Promise<DashboardResponse> {
     return this.request<DashboardResponse>('/api/internal/dashboard/');
   }
@@ -306,5 +319,65 @@ export class ReisiftClient implements ReisiftClientInterface {
       method: 'POST',
       body: JSON.stringify({ map_id: mapId }),
     });
+  }
+
+  async createProperty(request: CreatePropertyRequest): Promise<Property> {
+    logger.debug('Creating property', { address: request.address });
+    return this.request<Property>('/api/internal/property/', {
+      method: 'POST',
+      body: JSON.stringify(request),
+    });
+  }
+
+  async ensurePropertyByMapId(mapId: string, options: EnsurePropertyOptions = {}): Promise<Property> {
+    logger.debug('Ensuring property by map ID', { mapId });
+
+    // Check if property already exists
+    const info = await this.getAddressInfoFromMapId(mapId);
+
+    if (info.saved_property_uuid) {
+      logger.debug('Property already exists', { uuid: info.saved_property_uuid });
+      return this.getPropertyById(info.saved_property_uuid);
+    }
+
+    // Property doesn't exist, create it
+    if (!info.address) {
+      throw new Error('Address info not returned from map ID lookup');
+    }
+
+    const { includeOwner = true, ...createOptions } = options;
+
+    const createRequest: CreatePropertyRequest = {
+      address: {
+        street: info.address.street ?? '',
+        city: info.address.city ?? '',
+        state: info.address.state ?? '',
+        postal_code: info.address.postal_code ?? '',
+        country: info.address.country,
+      },
+      ...createOptions,
+    };
+
+    // Include owner info if available and requested
+    if (includeOwner && info.owner) {
+      createRequest.owner = {
+        first_name: info.owner.first_name,
+        last_name: info.owner.last_name,
+        company: info.owner.company,
+      };
+
+      if (info.owner.address) {
+        createRequest.owner.address = {
+          street: info.owner.address.street ?? '',
+          city: info.owner.address.city ?? '',
+          state: info.owner.address.state ?? '',
+          postal_code: info.owner.address.postal_code ?? '',
+          country: info.owner.address.country,
+        };
+      }
+    }
+
+    logger.debug('Creating new property from map ID', { address: createRequest.address });
+    return this.createProperty(createRequest);
   }
 }

@@ -24,4 +24,10 @@ export type {
   SearchAutocompleteResponse,
   AddressInfoFromMapIdRequest,
   AddressInfoFromMapIdResponse,
+  MapIdAddress,
+  MapIdOwner,
+  CreatePropertyAddress,
+  CreatePropertyOwner,
+  CreatePropertyRequest,
+  EnsurePropertyOptions,
 } from '../types.js';
