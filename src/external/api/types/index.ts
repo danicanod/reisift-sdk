@@ -18,4 +18,10 @@ export type {
   PropertyOffer,
   PropertyOffersResponse,
   ApiError,
+  UserResponse,
+  SearchAutocompleteRequest,
+  SearchAutocompleteResult,
+  SearchAutocompleteResponse,
+  AddressInfoFromMapIdRequest,
+  AddressInfoFromMapIdResponse,
 } from '../types.js';

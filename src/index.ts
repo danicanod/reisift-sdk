@@ -23,7 +23,24 @@ export type { ReisiftClientInterface } from './external/api/client.interface.js'
 
 // External types (API shapes)
 export type {
-  // Add your API types here as you reverse engineer the API
+  UserResponse,
+  Property,
+  PropertyAddress,
+  PropertyOwner,
+  PropertySearchRequest,
+  PropertySearchResponse,
+  PropertyImage,
+  PropertyImagesResponse,
+  PropertyOffer,
+  PropertyOffersResponse,
+  DashboardResponse,
+  DashboardGeneralResponse,
+  SearchAutocompleteResult,
+  SearchAutocompleteResponse,
+  AddressInfoFromMapIdResponse,
+  ApiError,
+  Pagination,
+  PaginatedResponse,
 } from './external/api/types.js';
 
 // Logger (for debugging)

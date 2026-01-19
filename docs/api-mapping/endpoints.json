@@ -1,82 +1,89 @@
 [
   {
     "method": "GET",
-    "url": "https://apiv2.reisift.io/api/internal/user/",
-    "path": "/api/internal/user/",
+    "url": "https://notifications.reisift.io/notification/unread_count/",
+    "path": "/notification/unread_count/",
     "queryParams": {},
     "requestHeaders": {
       "x-reisift-ui-version": "2022.02.01.7"
     },
-    "responseStatus": 401,
+    "responseStatus": 200,
     "contentType": "application/json"
   },
   {
     "method": "POST",
-    "url": "https://www.google.com/ccm/collect?frm=0&en=page_view&dl=https%3A%2F%2Fapp.reisift.io%2F&scrsrc=www.googletagmanager.com&rnd=1195087204.1768822268&dt=REISift&auid=2010420306.1762440189&navt=n&npa=0&gtm=45He61e1v812229068za200zd812229068xea&gcd=13l3l3l3l1l1&dma=0&tag_exp=103116026~103200004~104527907~104528501~104573694~104684208~104684211~105391253~115938466~115938469~116988315~117041587&tft=1768822268015&tfd=1520&apve=1&apvf=f",
-    "path": "/ccm/collect",
-    "queryParams": {
-      "frm": "0",
-      "en": "page_view",
-      "dl": "https://app.reisift.io/",
-      "scrsrc": "www.googletagmanager.com",
-      "rnd": "1195087204.1768822268",
-      "dt": "REISift",
-      "auid": "2010420306.1762440189",
-      "navt": "n",
-      "npa": "0",
-      "gtm": "45He61e1v812229068za200zd812229068xea",
-      "gcd": "13l3l3l3l1l1",
-      "dma": "0",
-      "tag_exp": "103116026~103200004~104527907~104528501~104573694~104684208~104684211~105391253~115938466~115938469~116988315~117041587",
-      "tft": "1768822268015",
-      "tfd": "1520",
-      "apve": "1",
-      "apvf": "f"
+    "url": "https://map.reisift.io/properties/search-autocomplete/",
+    "path": "/properties/search-autocomplete/",
+    "queryParams": {},
+    "requestHeaders": {
+      "content-type": "application/json",
+      "x-reisift-ui-version": "2022.02.01.7"
     },
+    "requestBody": {
+      "search": "\"70 Arvida Road, Wolcott, CT\""
+    },
+    "responseStatus": 200,
+    "contentType": "application/json"
+  },
+  {
+    "method": "OPTIONS",
+    "url": "https://map.reisift.io/properties/search-autocomplete/",
+    "path": "/properties/search-autocomplete/",
+    "queryParams": {},
     "requestHeaders": {},
     "responseStatus": 200,
-    "contentType": "text/plain"
+    "contentType": "text/html"
   },
   {
     "method": "GET",
-    "url": "https://api.useproof.com/pixel/sDxBEPG0dBPvogEE3YWNkD5w6n53?url=https:%2F%2Fapp.reisift.io%2F",
-    "path": "/pixel/sDxBEPG0dBPvogEE3YWNkD5w6n53",
+    "url": "https://backend.getbeamer.com/checkNPSShow?url=https%3A%2F%2Fapp.reisift.io%2Frecords%2Fproperties&productId=rEziIThj32080&userId=1752b70e-44e9-4491-b1e5-4b24f10055c6&customUserId=1991b808-59aa-4efa-8723-b75d0427a9b5&email=danicanod%40gmail.com&createdAt=1739296826430&multiUser=true&mobile=false",
+    "path": "/checkNPSShow",
     "queryParams": {
-      "url": "https://app.reisift.io/"
+      "url": "https://app.reisift.io/records/properties",
+      "productId": "rEziIThj32080",
+      "userId": "1752b70e-44e9-4491-b1e5-4b24f10055c6",
+      "customUserId": "1991b808-59aa-4efa-8723-b75d0427a9b5",
+      "email": "danicanod@gmail.com",
+      "createdAt": "1739296826430",
+      "multiUser": "true",
+      "mobile": "false"
     },
     "requestHeaders": {},
-    "responseStatus": 404,
+    "responseStatus": 200,
     "contentType": "application/json"
   },
   {
-    "method": "POST",
-    "url": "https://apiv2.reisift.io/api/token/refresh/",
-    "path": "/api/token/refresh/",
-    "queryParams": {},
-    "requestHeaders": {
-      "content-type": "application/json"
+    "method": "GET",
+    "url": "https://app.getbeamer.com/npsWidget?productId=rEziIThj32080&userId=1752b70e-44e9-4491-b1e5-4b24f10055c6&customUserId=1991b808-59aa-4efa-8723-b75d0427a9b5&lastname=S%C3%A1nchez&firstname=Daniel&email=danicanod%40gmail.com&multiUser=true&url=https%3A%2F%2Fapp.reisift.io%2Frecords%2Fproperties",
+    "path": "/npsWidget",
+    "queryParams": {
+      "productId": "rEziIThj32080",
+      "userId": "1752b70e-44e9-4491-b1e5-4b24f10055c6",
+      "customUserId": "1991b808-59aa-4efa-8723-b75d0427a9b5",
+      "lastname": "Sánchez",
+      "firstname": "Daniel",
+      "email": "danicanod@gmail.com",
+      "multiUser": "true",
+      "url": "https://app.reisift.io/records/properties"
     },
-    "requestBody": {
-      "refresh": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzUxMiJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc2ODc2MTA1NiwiaWF0IjoxNzY4NTAxODU2LCJqdGkiOiI3NDllMDcyNGQxZDU0MmNlYjQ4NjI5ZDk5ZjMxMTBjYiIsInVzZXJfaWQiOiJmYWNkMzQzMy00ZTMxLTQyODItODA3Yi1kMTgzMDBmZmJlZGYiLCJhY2NvdW50IjoiYzM1NjAzNzctNWVjYi00Mzg2LWI4NmYtNzU1MzcwYmE1Y2U3IiwiZW1haWwiOiJqb25hc0Ayc2l4dGVlbnZlbnR1cmVzLmNvbSIsImZpcnN0X25hbWUiOiJKb25hcyIsImxhc3RfbmFtZSI6Ik1lZHJhbm8iLCJmZWF0dXJlX2ZsYWdzIjpbInNpZnRfbWFwX3BybyIsImRhdGFmbGlrX3NvdXJjZSJdLCJhdWQiOiJyZWlzaWZ0IiwiaXNzIjoicmVpc2lmdCJ9.JgvpJ0eY0KdEHwLoZ7e5Lg5h87Bt9e3-o44Dso3BZtVkgicOLlEJPndxv6l_nNISsVNqrpyZ5cyTqOcpOpW74FHjHVGIFDW_dcIORKwDAiWkTklj1drG5s3MBGzZOyESap2CZz0hxuOlfzvwnJAdEsPQcFm_Hb_kJ76sd0INdNo2pbfwu56q9lJnd6izZ-TwVHndERvRey07Slk8uBGJCpeCZn1a7D312SkmQm9LYqE0w-AWT6mK6aO1LojYKlLWcgHQ4QLqxKdcbOXmOYW6b3NFJ607CgE92zLoovfzRLA_1umL0G31bCj-F_L3mMZ0D7iFwuKMqUh63RmW7H0mrw"
-    },
-    "responseStatus": 401,
-    "contentType": "application/json"
+    "requestHeaders": {},
+    "responseStatus": 200,
+    "contentType": "text/html"
   },
   {
     "method": "POST",
-    "url": "https://analytics.google.com/g/collect?v=2&tid=G-SBWFSZ23T2&gtm=45je61e1v9126262676z8812229068za20gzb812229068zd812229068&_p=1768822267666&_gaz=1&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=2110690115.1762440189&ul=en-us&sr=1728x1117&ir=1&uaa=arm&uab=64&uafvl=Google%2520Chrome%3B143.0.7499.194%7CChromium%3B143.0.7499.194%7CNot%2520A(Brand%3B24.0.0.0&uamb=0&uam=&uap=macOS&uapv=26.3.0&uaw=0&are=1&frm=0&pscdl=noapi&_eu=EAAAAGQ&_s=1&tag_exp=103116026~103200004~104527907~104528500~104684208~104684211~105391253~115938466~115938468~116185179~116185180~117041588&sid=1768822268&sct=103&seg=0&dl=https%3A%2F%2Fapp.reisift.io%2F&dt=REISift&en=page_view&_ss=1&tfd=1681",
+    "url": "https://analytics.google.com/g/collect?v=2&tid=G-SBWFSZ23T2&gtm=45je61e1v9126262676za20gzb812229068zd812229068&_p=1768827260687&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=1049864667.1762534482&ul=es-us&sr=1728x1117&ir=1&uaa=arm&uab=64&uafvl=Google%2520Chrome%3B143.0.7499.194%7CChromium%3B143.0.7499.194%7CNot%2520A(Brand%3B24.0.0.0&uamb=0&uam=&uap=macOS&uapv=26.3.0&uaw=0&are=1&frm=0&pscdl=noapi&_eu=EEEAAGQ&_s=4&tag_exp=103116026~103200004~104527906~104528501~104684208~104684211~105391252~115495939~115938466~115938468~115985661~116744866~117041587&sid=1768827255&sct=132&seg=1&dl=https%3A%2F%2Fapp.reisift.io%2Frecords%2Fproperties&dr=https%3A%2F%2Fwww.reisift.io%2F&dt=Records%20-%20REISift&en=form_start&ep.form_id=add-property__property-address&ep.form_name=&ep.form_destination=https%3A%2F%2Fapp.reisift.io%2Frecords%2Fproperties&epn.form_length=5&ep.first_field_id=&ep.first_field_name=&ep.first_field_type=text&epn.first_field_position=1&_et=22639&tfd=55794",
     "path": "/g/collect",
     "queryParams": {
       "v": "2",
       "tid": "G-SBWFSZ23T2",
-      "gtm": "45je61e1v9126262676z8812229068za20gzb812229068zd812229068",
-      "_p": "1768822267666",
-      "_gaz": "1",
+      "gtm": "45je61e1v9126262676za20gzb812229068zd812229068",
+      "_p": "1768827260687",
       "gcd": "13l3l3l3l1l1",
       "npa": "0",
       "dma": "0",
-      "cid": "2110690115.1762440189",
-      "ul": "en-us",
+      "cid": "1049864667.1762534482",
+      "ul": "es-us",
       "sr": "1728x1117",
       "ir": "1",
       "uaa": "arm",
@@ -90,17 +97,26 @@
       "are": "1",
       "frm": "0",
       "pscdl": "noapi",
-      "_eu": "EAAAAGQ",
-      "_s": "1",
-      "tag_exp": "103116026~103200004~104527907~104528500~104684208~104684211~105391253~115938466~115938468~116185179~116185180~117041588",
-      "sid": "1768822268",
-      "sct": "103",
-      "seg": "0",
-      "dl": "https://app.reisift.io/",
-      "dt": "REISift",
-      "en": "page_view",
-      "_ss": "1",
-      "tfd": "1681"
+      "_eu": "EEEAAGQ",
+      "_s": "4",
+      "tag_exp": "103116026~103200004~104527906~104528501~104684208~104684211~105391252~115495939~115938466~115938468~115985661~116744866~117041587",
+      "sid": "1768827255",
+      "sct": "132",
+      "seg": "1",
+      "dl": "https://app.reisift.io/records/properties",
+      "dr": "https://www.reisift.io/",
+      "dt": "Records - REISift",
+      "en": "form_start",
+      "ep.form_id": "add-property__property-address",
+      "ep.form_name": "",
+      "ep.form_destination": "https://app.reisift.io/records/properties",
+      "epn.form_length": "5",
+      "ep.first_field_id": "",
+      "ep.first_field_name": "",
+      "ep.first_field_type": "text",
+      "epn.first_field_position": "1",
+      "_et": "22639",
+      "tfd": "55794"
     },
     "requestHeaders": {
       "x-browser-channel": "stable",
@@ -113,651 +129,26 @@
     "contentType": "text/plain"
   },
   {
-    "method": "POST",
-    "url": "https://apiv2.reisift.io/api/token/",
-    "path": "/api/token/",
+    "method": "OPTIONS",
+    "url": "https://apiv2.reisift.io/api/internal/property/address-info-from-map-id/",
+    "path": "/api/internal/property/address-info-from-map-id/",
     "queryParams": {},
-    "requestHeaders": {
-      "content-type": "application/json"
-    },
-    "requestBody": {
-      "email": "jonas@2sixteenventures.com",
-      "password": "Minkymedrano0623$",
-      "remember": true,
-      "agree": true
-    },
-    "responseStatus": 200,
-    "contentType": "application/json"
-  },
-  {
-    "method": "GET",
-    "url": "https://backend.getbeamer.com/initialize?product=rEziIThj32080&domain=app.reisift.io&language=EN&uid=true",
-    "path": "/initialize",
-    "queryParams": {
-      "product": "rEziIThj32080",
-      "domain": "app.reisift.io",
-      "language": "EN",
-      "uid": "true"
-    },
     "requestHeaders": {},
     "responseStatus": 200,
-    "contentType": "application/json"
-  },
-  {
-    "method": "GET",
-    "url": "https://notifications.reisift.io/notification/unread_count/",
-    "path": "/notification/unread_count/",
-    "queryParams": {},
-    "requestHeaders": {
-      "x-reisift-ui-version": "2022.02.01.7"
-    },
-    "responseStatus": 200,
-    "contentType": "application/json"
-  },
-  {
-    "method": "GET",
-    "url": "https://apiv2.reisift.io/api/internal/dashboard/",
-    "path": "/api/internal/dashboard/",
-    "queryParams": {},
-    "requestHeaders": {
-      "x-reisift-ui-version": "2022.02.01.7"
-    },
-    "responseStatus": 200,
-    "contentType": "application/json"
-  },
-  {
-    "method": "GET",
-    "url": "https://apiv2.reisift.io/api/internal/dashboard/general/",
-    "path": "/api/internal/dashboard/general/",
-    "queryParams": {},
-    "requestHeaders": {
-      "x-reisift-ui-version": "2022.02.01.7"
-    },
-    "responseStatus": 200,
-    "contentType": "application/json"
-  },
-  {
-    "method": "GET",
-    "url": "https://apiv2.reisift.io/api/internal/dashboard-report/76f14e5c-afd6-4386-b69a-1d77d382018a/?start_date=2026-01-01T04:00:00.000Z&end_date=2026-01-19T11:31:20.149Z",
-    "path": "/api/internal/dashboard-report/76f14e5c-afd6-4386-b69a-1d77d382018a/",
-    "queryParams": {
-      "start_date": "2026-01-01T04:00:00.000Z",
-      "end_date": "2026-01-19T11:31:20.149Z"
-    },
-    "requestHeaders": {
-      "x-reisift-ui-version": "2022.02.01.7"
-    },
-    "responseStatus": 200,
-    "contentType": "application/json"
-  },
-  {
-    "method": "GET",
-    "url": "https://apiv2.reisift.io/api/internal/dashboard-report/c71fed9f-9509-4bc7-aedb-c0d57e7924be/?start_date=2026-01-01T04:00:00.000Z&end_date=2026-01-19T11:31:20.149Z",
-    "path": "/api/internal/dashboard-report/c71fed9f-9509-4bc7-aedb-c0d57e7924be/",
-    "queryParams": {
-      "start_date": "2026-01-01T04:00:00.000Z",
-      "end_date": "2026-01-19T11:31:20.149Z"
-    },
-    "requestHeaders": {
-      "x-reisift-ui-version": "2022.02.01.7"
-    },
-    "responseStatus": 200,
-    "contentType": "application/json"
-  },
-  {
-    "method": "GET",
-    "url": "https://apiv2.reisift.io/api/internal/dashboard-report/07e2f473-827b-477f-aa96-e6a689287809/?start_date=2026-01-01T04:00:00.000Z&end_date=2026-01-19T11:31:20.149Z",
-    "path": "/api/internal/dashboard-report/07e2f473-827b-477f-aa96-e6a689287809/",
-    "queryParams": {
-      "start_date": "2026-01-01T04:00:00.000Z",
-      "end_date": "2026-01-19T11:31:20.149Z"
-    },
-    "requestHeaders": {
-      "x-reisift-ui-version": "2022.02.01.7"
-    },
-    "responseStatus": 200,
-    "contentType": "application/json"
-  },
-  {
-    "method": "GET",
-    "url": "https://apiv2.reisift.io/api/internal/dashboard-report/3fa0d9a1-89d7-4239-af63-f4541afec5c9/?start_date=2026-01-01T04:00:00.000Z&end_date=2026-01-19T11:31:20.149Z",
-    "path": "/api/internal/dashboard-report/3fa0d9a1-89d7-4239-af63-f4541afec5c9/",
-    "queryParams": {
-      "start_date": "2026-01-01T04:00:00.000Z",
-      "end_date": "2026-01-19T11:31:20.149Z"
-    },
-    "requestHeaders": {
-      "x-reisift-ui-version": "2022.02.01.7"
-    },
-    "responseStatus": 200,
-    "contentType": "application/json"
-  },
-  {
-    "method": "GET",
-    "url": "https://apiv2.reisift.io/api/internal/dashboard-report/9c9b54a2-4aab-4c2e-8ea2-f3daf184bce9/?start_date=2026-01-01T04:00:00.000Z&end_date=2026-01-19T11:31:20.149Z",
-    "path": "/api/internal/dashboard-report/9c9b54a2-4aab-4c2e-8ea2-f3daf184bce9/",
-    "queryParams": {
-      "start_date": "2026-01-01T04:00:00.000Z",
-      "end_date": "2026-01-19T11:31:20.149Z"
-    },
-    "requestHeaders": {
-      "x-reisift-ui-version": "2022.02.01.7"
-    },
-    "responseStatus": 200,
-    "contentType": "application/json"
-  },
-  {
-    "method": "GET",
-    "url": "https://apiv2.reisift.io/api/internal/dashboard-report/ba19becb-1057-4dec-8be4-fcdb2d4ad690/?start_date=2026-01-01T04:00:00.000Z&end_date=2026-01-19T11:31:20.149Z",
-    "path": "/api/internal/dashboard-report/ba19becb-1057-4dec-8be4-fcdb2d4ad690/",
-    "queryParams": {
-      "start_date": "2026-01-01T04:00:00.000Z",
-      "end_date": "2026-01-19T11:31:20.149Z"
-    },
-    "requestHeaders": {
-      "x-reisift-ui-version": "2022.02.01.7"
-    },
-    "responseStatus": 200,
-    "contentType": "application/json"
-  },
-  {
-    "method": "GET",
-    "url": "https://apiv2.reisift.io/api/internal/dashboard-report/8c30014f-3bc3-486d-a2b4-b20676da8115/?start_date=2026-01-01T04:00:00.000Z&end_date=2026-01-19T11:31:20.149Z",
-    "path": "/api/internal/dashboard-report/8c30014f-3bc3-486d-a2b4-b20676da8115/",
-    "queryParams": {
-      "start_date": "2026-01-01T04:00:00.000Z",
-      "end_date": "2026-01-19T11:31:20.149Z"
-    },
-    "requestHeaders": {
-      "x-reisift-ui-version": "2022.02.01.7"
-    },
-    "responseStatus": 200,
-    "contentType": "application/json"
-  },
-  {
-    "method": "GET",
-    "url": "https://apiv2.reisift.io/api/internal/dashboard-report/700c0883-53aa-43c5-b0a7-b87243c60e10/?start_date=2026-01-01T04:00:00.000Z&end_date=2026-01-19T11:31:20.149Z",
-    "path": "/api/internal/dashboard-report/700c0883-53aa-43c5-b0a7-b87243c60e10/",
-    "queryParams": {
-      "start_date": "2026-01-01T04:00:00.000Z",
-      "end_date": "2026-01-19T11:31:20.149Z"
-    },
-    "requestHeaders": {
-      "x-reisift-ui-version": "2022.02.01.7"
-    },
-    "responseStatus": 200,
-    "contentType": "application/json"
-  },
-  {
-    "method": "GET",
-    "url": "https://apiv2.reisift.io/api/internal/dashboard-report/5b2bea5a-cc29-4c8d-a1bb-ddf8abe8d563/?start_date=2026-01-01T04:00:00.000Z&end_date=2026-01-19T11:31:20.149Z",
-    "path": "/api/internal/dashboard-report/5b2bea5a-cc29-4c8d-a1bb-ddf8abe8d563/",
-    "queryParams": {
-      "start_date": "2026-01-01T04:00:00.000Z",
-      "end_date": "2026-01-19T11:31:20.149Z"
-    },
-    "requestHeaders": {
-      "x-reisift-ui-version": "2022.02.01.7"
-    },
-    "responseStatus": 200,
-    "contentType": "application/json"
-  },
-  {
-    "method": "GET",
-    "url": "https://apiv2.reisift.io/api/internal/dashboard-report/739a9f53-e8fe-4aba-ab1a-a6428508dfbc/?start_date=2026-01-01T04:00:00.000Z&end_date=2026-01-19T11:31:20.149Z",
-    "path": "/api/internal/dashboard-report/739a9f53-e8fe-4aba-ab1a-a6428508dfbc/",
-    "queryParams": {
-      "start_date": "2026-01-01T04:00:00.000Z",
-      "end_date": "2026-01-19T11:31:20.149Z"
-    },
-    "requestHeaders": {
-      "x-reisift-ui-version": "2022.02.01.7"
-    },
-    "responseStatus": 200,
-    "contentType": "application/json"
-  },
-  {
-    "method": "GET",
-    "url": "https://apiv2.reisift.io/api/internal/dashboard-report/85bc4cc3-c566-4901-9edb-21a6d5373ba3/?start_date=2026-01-01T04:00:00.000Z&end_date=2026-01-19T11:31:20.149Z",
-    "path": "/api/internal/dashboard-report/85bc4cc3-c566-4901-9edb-21a6d5373ba3/",
-    "queryParams": {
-      "start_date": "2026-01-01T04:00:00.000Z",
-      "end_date": "2026-01-19T11:31:20.149Z"
-    },
-    "requestHeaders": {
-      "x-reisift-ui-version": "2022.02.01.7"
-    },
-    "responseStatus": 200,
-    "contentType": "application/json"
-  },
-  {
-    "method": "GET",
-    "url": "https://apiv2.reisift.io/api/internal/dashboard-report/d21c8f97-e7a6-49eb-9e63-d0048117089f/?start_date=2026-01-01T04:00:00.000Z&end_date=2026-01-19T11:31:20.149Z",
-    "path": "/api/internal/dashboard-report/d21c8f97-e7a6-49eb-9e63-d0048117089f/",
-    "queryParams": {
-      "start_date": "2026-01-01T04:00:00.000Z",
-      "end_date": "2026-01-19T11:31:20.149Z"
-    },
-    "requestHeaders": {
-      "x-reisift-ui-version": "2022.02.01.7"
-    },
-    "responseStatus": 200,
-    "contentType": "application/json"
-  },
-  {
-    "method": "GET",
-    "url": "https://apiv2.reisift.io/api/internal/dashboard-report/9420d48b-1eac-4de1-973e-63f8a1d89cb8/?start_date=2026-01-01T04:00:00.000Z&end_date=2026-01-19T11:31:20.149Z",
-    "path": "/api/internal/dashboard-report/9420d48b-1eac-4de1-973e-63f8a1d89cb8/",
-    "queryParams": {
-      "start_date": "2026-01-01T04:00:00.000Z",
-      "end_date": "2026-01-19T11:31:20.149Z"
-    },
-    "requestHeaders": {
-      "x-reisift-ui-version": "2022.02.01.7"
-    },
-    "responseStatus": 200,
-    "contentType": "application/json"
-  },
-  {
-    "method": "GET",
-    "url": "https://apiv2.reisift.io/api/internal/dashboard-report/a5fdcf84-9e9a-457e-acef-0ac757fe6782/?start_date=2026-01-01T04:00:00.000Z&end_date=2026-01-19T11:31:20.149Z",
-    "path": "/api/internal/dashboard-report/a5fdcf84-9e9a-457e-acef-0ac757fe6782/",
-    "queryParams": {
-      "start_date": "2026-01-01T04:00:00.000Z",
-      "end_date": "2026-01-19T11:31:20.149Z"
-    },
-    "requestHeaders": {
-      "x-reisift-ui-version": "2022.02.01.7"
-    },
-    "responseStatus": 200,
-    "contentType": "application/json"
-  },
-  {
-    "method": "GET",
-    "url": "https://apiv2.reisift.io/api/internal/dashboard-report/b5f32f49-9620-4ae9-8223-be83d725d096/?start_date=2026-01-01T04:00:00.000Z&end_date=2026-01-19T11:31:20.149Z",
-    "path": "/api/internal/dashboard-report/b5f32f49-9620-4ae9-8223-be83d725d096/",
-    "queryParams": {
-      "start_date": "2026-01-01T04:00:00.000Z",
-      "end_date": "2026-01-19T11:31:20.149Z"
-    },
-    "requestHeaders": {
-      "x-reisift-ui-version": "2022.02.01.7"
-    },
-    "responseStatus": 200,
-    "contentType": "application/json"
-  },
-  {
-    "method": "GET",
-    "url": "https://apiv2.reisift.io/api/internal/dashboard-report/6addaf9e-5fb7-4427-adc0-61d816d1d55b/?start_date=2026-01-01T04:00:00.000Z&end_date=2026-01-19T11:31:20.149Z",
-    "path": "/api/internal/dashboard-report/6addaf9e-5fb7-4427-adc0-61d816d1d55b/",
-    "queryParams": {
-      "start_date": "2026-01-01T04:00:00.000Z",
-      "end_date": "2026-01-19T11:31:20.149Z"
-    },
-    "requestHeaders": {
-      "x-reisift-ui-version": "2022.02.01.7"
-    },
-    "responseStatus": 200,
-    "contentType": "application/json"
-  },
-  {
-    "method": "GET",
-    "url": "https://backend.getbeamer.com/numberFeatures?url=app.reisift.io&product=rEziIThj32080&v=1&filterByUrl=false&language=EN&date=2026-01-05T16:21:51.152Z&boostedAnnouncementDate=2025-12-29T19:25:17.779Z&user_id=1084f4a1-b895-461a-9944-e82995703cf5&custom_user_id=facd3433-4e31-4282-807b-d18300ffbedf&lastname=Medrano&firstname=Jonas&email=jonas%402sixteenventures.com&_=1767628138788",
-    "path": "/numberFeatures",
-    "queryParams": {
-      "url": "app.reisift.io",
-      "product": "rEziIThj32080",
-      "v": "1",
-      "filterByUrl": "false",
-      "language": "EN",
-      "date": "2026-01-05T16:21:51.152Z",
-      "boostedAnnouncementDate": "2025-12-29T19:25:17.779Z",
-      "user_id": "1084f4a1-b895-461a-9944-e82995703cf5",
-      "custom_user_id": "facd3433-4e31-4282-807b-d18300ffbedf",
-      "lastname": "Medrano",
-      "firstname": "Jonas",
-      "email": "jonas@2sixteenventures.com",
-      "_": "1767628138788"
-    },
-    "requestHeaders": {},
-    "responseStatus": 200,
-    "contentType": "application/json"
-  },
-  {
-    "method": "GET",
-    "url": "https://apiv2.reisift.io/api/internal/custom-fields/?entity_type=property",
-    "path": "/api/internal/custom-fields/",
-    "queryParams": {
-      "entity_type": "property"
-    },
-    "requestHeaders": {
-      "x-reisift-ui-version": "2022.02.01.7"
-    },
-    "responseStatus": 200,
-    "contentType": "application/json"
+    "contentType": "text/html"
   },
   {
     "method": "POST",
-    "url": "https://apiv2.reisift.io/api/internal/property/",
-    "path": "/api/internal/property/",
-    "queryParams": {},
-    "requestHeaders": {
-      "content-type": "application/json",
-      "x-http-method-override": "GET",
-      "x-reisift-ui-version": "2022.02.01.7"
-    },
-    "requestBody": {
-      "limit": 10,
-      "offset": 0,
-      "ordering": "-list_count",
-      "query": {
-        "must": {
-          "property_type": "clean"
-        }
-      }
-    },
-    "responseStatus": 200,
-    "contentType": "application/json"
-  },
-  {
-    "method": "GET",
-    "url": "https://apiv2.reisift.io/api/internal/filter-preset/?offset=0&limit=999&ordering=title&quick_filter=true&type=properties",
-    "path": "/api/internal/filter-preset/",
-    "queryParams": {
-      "offset": "0",
-      "limit": "999",
-      "ordering": "title",
-      "quick_filter": "true",
-      "type": "properties"
-    },
-    "requestHeaders": {
-      "x-reisift-ui-version": "2022.02.01.7"
-    },
-    "responseStatus": 200,
-    "contentType": "application/json"
-  },
-  {
-    "method": "GET",
-    "url": "https://apiv2.reisift.io/api/internal/drip-campaigns/?offset=0&limit=5000&ordering=title",
-    "path": "/api/internal/drip-campaigns/",
-    "queryParams": {
-      "offset": "0",
-      "limit": "5000",
-      "ordering": "title"
-    },
-    "requestHeaders": {
-      "x-reisift-ui-version": "2022.02.01.7"
-    },
-    "responseStatus": 200,
-    "contentType": "application/json"
-  },
-  {
-    "method": "GET",
-    "url": "https://apiv2.reisift.io/api/internal/property/9f5223b3-942c-474d-9539-4037be5bd894/",
-    "path": "/api/internal/property/9f5223b3-942c-474d-9539-4037be5bd894/",
-    "queryParams": {},
-    "requestHeaders": {
-      "x-reisift-ui-version": "2022.02.01.7"
-    },
-    "responseStatus": 200,
-    "contentType": "application/json"
-  },
-  {
-    "method": "GET",
-    "url": "https://apiv2.reisift.io/api/internal/property/9f5223b3-942c-474d-9539-4037be5bd894/image/?offset=0&limit=999",
-    "path": "/api/internal/property/9f5223b3-942c-474d-9539-4037be5bd894/image/",
-    "queryParams": {
-      "offset": "0",
-      "limit": "999"
-    },
-    "requestHeaders": {
-      "x-reisift-ui-version": "2022.02.01.7"
-    },
-    "responseStatus": 200,
-    "contentType": "application/json"
-  },
-  {
-    "method": "GET",
-    "url": "https://apiv2.reisift.io/api/internal/property/9f5223b3-942c-474d-9539-4037be5bd894/offer/?offset=0&limit=999&ordering=-created",
-    "path": "/api/internal/property/9f5223b3-942c-474d-9539-4037be5bd894/offer/",
-    "queryParams": {
-      "offset": "0",
-      "limit": "999",
-      "ordering": "-created"
-    },
-    "requestHeaders": {
-      "x-reisift-ui-version": "2022.02.01.7"
-    },
-    "responseStatus": 200,
-    "contentType": "application/json"
-  },
-  {
-    "method": "GET",
-    "url": "https://apiv2.reisift.io/api/internal/property/9f5223b3-942c-474d-9539-4037be5bd894/deal/",
-    "path": "/api/internal/property/9f5223b3-942c-474d-9539-4037be5bd894/deal/",
-    "queryParams": {},
-    "requestHeaders": {
-      "x-reisift-ui-version": "2022.02.01.7"
-    },
-    "responseStatus": 404,
-    "contentType": "application/json"
-  },
-  {
-    "method": "GET",
-    "url": "https://apiv2.reisift.io/api/internal/list/?offset=0&limit=5000&ordering=title",
-    "path": "/api/internal/list/",
-    "queryParams": {
-      "offset": "0",
-      "limit": "5000",
-      "ordering": "title"
-    },
-    "requestHeaders": {
-      "x-reisift-ui-version": "2022.02.01.7"
-    },
-    "responseStatus": 200,
-    "contentType": "application/json"
-  },
-  {
-    "method": "GET",
-    "url": "https://mail.reisift.io/campaigns/?prop=9f5223b3-942c-474d-9539-4037be5bd894&is_active=1",
-    "path": "/campaigns/",
-    "queryParams": {
-      "prop": "9f5223b3-942c-474d-9539-4037be5bd894",
-      "is_active": "1"
-    },
-    "requestHeaders": {
-      "x-reisift-ui-version": "2022.02.01.7"
-    },
-    "responseStatus": 200,
-    "contentType": "application/json"
-  },
-  {
-    "method": "GET",
-    "url": "https://apiv2.reisift.io/api/internal/drip-campaign-history/by-property/?property_uuid=9f5223b3-942c-474d-9539-4037be5bd894",
-    "path": "/api/internal/drip-campaign-history/by-property/",
-    "queryParams": {
-      "property_uuid": "9f5223b3-942c-474d-9539-4037be5bd894"
-    },
-    "requestHeaders": {
-      "x-reisift-ui-version": "2022.02.01.7"
-    },
-    "responseStatus": 200,
-    "contentType": "application/json"
-  },
-  {
-    "method": "GET",
-    "url": "https://apiv2.reisift.io/api/internal/phone/type/",
-    "path": "/api/internal/phone/type/",
-    "queryParams": {},
-    "requestHeaders": {
-      "x-reisift-ui-version": "2022.02.01.7"
-    },
-    "responseStatus": 200,
-    "contentType": "application/json"
-  },
-  {
-    "method": "GET",
-    "url": "https://apiv2.reisift.io/api/internal/integration/",
-    "path": "/api/internal/integration/",
-    "queryParams": {},
-    "requestHeaders": {
-      "x-reisift-ui-version": "2022.02.01.7"
-    },
-    "responseStatus": 200,
-    "contentType": "application/json"
-  },
-  {
-    "method": "GET",
-    "url": "https://apiv2.reisift.io/api/internal/owner/3857ec2b-d6da-457a-bf17-6f9277fb08b8/sms/",
-    "path": "/api/internal/owner/3857ec2b-d6da-457a-bf17-6f9277fb08b8/sms/",
-    "queryParams": {},
-    "requestHeaders": {
-      "x-reisift-ui-version": "2022.02.01.7"
-    },
-    "responseStatus": 200,
-    "contentType": "application/json"
-  },
-  {
-    "method": "GET",
-    "url": "https://apiv2.reisift.io/api/internal/email-integration/",
-    "path": "/api/internal/email-integration/",
-    "queryParams": {},
-    "requestHeaders": {
-      "x-reisift-ui-version": "2022.02.01.7"
-    },
-    "responseStatus": 200,
-    "contentType": "application/json"
-  },
-  {
-    "method": "GET",
-    "url": "https://apiv2.reisift.io/api/internal/owner/3857ec2b-d6da-457a-bf17-6f9277fb08b8/sms/phone/",
-    "path": "/api/internal/owner/3857ec2b-d6da-457a-bf17-6f9277fb08b8/sms/phone/",
-    "queryParams": {},
-    "requestHeaders": {
-      "x-reisift-ui-version": "2022.02.01.7"
-    },
-    "responseStatus": 200,
-    "contentType": "application/json"
-  },
-  {
-    "method": "GET",
-    "url": "https://apiv2.reisift.io/api/internal/task/?property=9f5223b3-942c-474d-9539-4037be5bd894&ordering=due_date&completed=0&offset=0&limit=999&assigned_to=facd3433-4e31-4282-807b-d18300ffbedf",
-    "path": "/api/internal/task/",
-    "queryParams": {
-      "property": "9f5223b3-942c-474d-9539-4037be5bd894",
-      "ordering": "due_date",
-      "completed": "0",
-      "offset": "0",
-      "limit": "999",
-      "assigned_to": "facd3433-4e31-4282-807b-d18300ffbedf"
-    },
-    "requestHeaders": {
-      "x-reisift-ui-version": "2022.02.01.7"
-    },
-    "responseStatus": 200,
-    "contentType": "application/json"
-  },
-  {
-    "method": "GET",
-    "url": "https://apiv2.reisift.io/api/internal/siftline/property/9f5223b3-942c-474d-9539-4037be5bd894/card/",
-    "path": "/api/internal/siftline/property/9f5223b3-942c-474d-9539-4037be5bd894/card/",
-    "queryParams": {},
-    "requestHeaders": {
-      "x-reisift-ui-version": "2022.02.01.7"
-    },
-    "responseStatus": 200,
-    "contentType": "application/json"
-  },
-  {
-    "method": "POST",
-    "url": "https://apiv2.reisift.io/api/internal/property/9f5223b3-942c-474d-9539-4037be5bd894/next/",
-    "path": "/api/internal/property/9f5223b3-942c-474d-9539-4037be5bd894/next/",
+    "url": "https://apiv2.reisift.io/api/internal/property/address-info-from-map-id/",
+    "path": "/api/internal/property/address-info-from-map-id/",
     "queryParams": {},
     "requestHeaders": {
       "content-type": "application/json",
       "x-reisift-ui-version": "2022.02.01.7"
     },
     "requestBody": {
-      "limit": 1,
-      "offset": 0,
-      "ordering": "-list_count",
-      "query": {
-        "must": {
-          "property_type": "clean"
-        }
-      },
-      "list_count": 10
+      "map_id": "26000041"
     },
-    "responseStatus": 200,
-    "contentType": "application/json"
-  },
-  {
-    "method": "POST",
-    "url": "https://apiv2.reisift.io/api/internal/property/9f5223b3-942c-474d-9539-4037be5bd894/prev/",
-    "path": "/api/internal/property/9f5223b3-942c-474d-9539-4037be5bd894/prev/",
-    "queryParams": {},
-    "requestHeaders": {
-      "content-type": "application/json",
-      "x-reisift-ui-version": "2022.02.01.7"
-    },
-    "requestBody": {
-      "limit": 1,
-      "offset": 0,
-      "ordering": "-list_count",
-      "query": {
-        "must": {
-          "property_type": "clean"
-        }
-      },
-      "list_count": 10
-    },
-    "responseStatus": 200,
-    "contentType": "application/json"
-  },
-  {
-    "method": "GET",
-    "url": "https://apiv2.reisift.io/api/internal/account/user/?offset=0&limit=999",
-    "path": "/api/internal/account/user/",
-    "queryParams": {
-      "offset": "0",
-      "limit": "999"
-    },
-    "requestHeaders": {
-      "x-reisift-ui-version": "2022.02.01.7"
-    },
-    "responseStatus": 200,
-    "contentType": "application/json"
-  },
-  {
-    "method": "GET",
-    "url": "https://apiv2.reisift.io/api/internal/properties/status/?offset=0&limit=999&only_active=1",
-    "path": "/api/internal/properties/status/",
-    "queryParams": {
-      "offset": "0",
-      "limit": "999",
-      "only_active": "1"
-    },
-    "requestHeaders": {
-      "x-reisift-ui-version": "2022.02.01.7"
-    },
-    "responseStatus": 200,
-    "contentType": "application/json"
-  },
-  {
-    "method": "GET",
-    "url": "https://backend.getbeamer.com/checkNPSShow?url=https%3A%2F%2Fapp.reisift.io%2Frecords%2Fproperties%2F9f5223b3-942c-474d-9539-4037be5bd894%2Fdetails%3Fpage%3D1&productId=rEziIThj32080&userId=1084f4a1-b895-461a-9944-e82995703cf5&customUserId=facd3433-4e31-4282-807b-d18300ffbedf&email=jonas%402sixteenventures.com&createdAt=1688566585835&multiUser=true&mobile=false",
-    "path": "/checkNPSShow",
-    "queryParams": {
-      "url": "https://app.reisift.io/records/properties/9f5223b3-942c-474d-9539-4037be5bd894/details?page=1",
-      "productId": "rEziIThj32080",
-      "userId": "1084f4a1-b895-461a-9944-e82995703cf5",
-      "customUserId": "facd3433-4e31-4282-807b-d18300ffbedf",
-      "email": "jonas@2sixteenventures.com",
-      "createdAt": "1688566585835",
-      "multiUser": "true",
-      "mobile": "false"
-    },
-    "requestHeaders": {},
     "responseStatus": 200,
     "contentType": "application/json"
   }
