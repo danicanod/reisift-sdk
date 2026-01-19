@@ -43,6 +43,7 @@
 | ✅ | `GET` | `/api/internal/property/{uuid}/` | Get single property | `getPropertyById()` |
 | ✅ | `GET` | `/api/internal/property/{uuid}/image/` | Get property images | `getPropertyImages()` |
 | ✅ | `GET` | `/api/internal/property/{uuid}/offer/` | Get property offers | `getPropertyOffers()` |
+| ✅ | `POST` | `/api/internal/property/address-info-from-map-id/` | Get property info from map ID | `getAddressInfoFromMapId()` |
 | 📋 | `POST` | `/api/internal/property/{uuid}/next/` | Get next property | - |
 | 📋 | `POST` | `/api/internal/property/{uuid}/prev/` | Get previous property | - |
 | 📋 | `GET` | `/api/internal/property/{uuid}/deal/` | Get property deal | - |
@@ -118,6 +119,23 @@ Note: Uses `x-http-method-override: GET` header with POST request.
 | Status | Method | Endpoint | Description | SDK method |
 |--------|--------|----------|-------------|------------|
 | 📋 | `GET` | `/api/internal/filter-preset/` | Saved filter presets | - |
+
+## Map / Geocoding
+
+> Base URL: `https://map.reisift.io`
+
+| Status | Method | Endpoint | Description | SDK method |
+|--------|--------|----------|-------------|------------|
+| ✅ | `POST` | `/properties/search-autocomplete/` | Address autocomplete search | `searchAutocomplete()` |
+
+### Search autocomplete request
+```json
+{
+  "search": "70 Arvida Road, Wolcott, CT"
+}
+```
+
+Returns an array of matching addresses with map IDs that can be used with `getAddressInfoFromMapId()`.
 
 ## Notifications
 

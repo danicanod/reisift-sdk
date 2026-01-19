@@ -130,3 +130,58 @@ export interface ApiError {
   message: string;
   details?: unknown;
 }
+
+// User response (used for validating API key)
+export interface UserResponse {
+  uuid: string;
+  email?: string;
+  first_name?: string;
+  last_name?: string;
+  account?: string;
+  [key: string]: unknown;
+}
+
+// Search Autocomplete (map.reisift.io)
+export interface SearchAutocompleteRequest {
+  search: string;
+}
+
+export interface SearchAutocompleteResult {
+  id?: string;
+  map_id?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  zip?: string;
+  county?: string;
+  title?: string;
+  searchType?: string;
+  [key: string]: unknown;
+}
+
+export type SearchAutocompleteResponse = SearchAutocompleteResult[];
+
+// Address Info from Map ID
+export interface AddressInfoFromMapIdRequest {
+  map_id: string;
+}
+
+export interface AddressInfoFromMapIdResponse {
+  map_id?: string;
+  address?: string;
+  street?: string;
+  city?: string;
+  state?: string;
+  zip?: string;
+  county?: string;
+  latitude?: number;
+  longitude?: number;
+  property_type?: string;
+  bedrooms?: number;
+  bathrooms?: number;
+  square_feet?: number;
+  lot_size?: number;
+  year_built?: number;
+  estimated_value?: number;
+  [key: string]: unknown;
+}

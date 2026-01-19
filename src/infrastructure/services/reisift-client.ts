@@ -9,17 +9,28 @@ import type {
   Property,
   PropertyImagesResponse,
   PropertyOffersResponse,
+  SearchAutocompleteResponse,
+  AddressInfoFromMapIdResponse,
+  UserResponse,
 } from '../../external/api/types.js';
 import { logger } from '../../shared/logger.js';
 
 const DEFAULT_BASE_URL = 'https://apiv2.reisift.io';
+const MAP_BASE_URL = 'https://map.reisift.io';
 const UI_VERSION_HEADER = '2022.02.01.7';
 
 export interface ReisiftClientConfig {
+  /** Base URL for the API (default: https://apiv2.reisift.io) */
   baseUrl?: string;
+  /** Email for email/password authentication */
   email?: string;
+  /** Password for email/password authentication */
   password?: string;
+  /** Long-lived API key (used as Bearer token, skips login flow) */
+  apiKey?: string;
 }
+
+type AuthMode = 'none' | 'api_key' | 'jwt';
 
 export class ReisiftClient implements ReisiftClientInterface {
   private readonly config: ReisiftClientConfig;
@@ -27,6 +38,7 @@ export class ReisiftClient implements ReisiftClientInterface {
   private accessToken: string | null = null;
   private refreshToken: string | null = null;
   private isRefreshing = false;
+  private authMode: AuthMode = 'none';
 
   constructor(config?: ReisiftClientConfig) {
     this.config = config ?? {};
@@ -35,15 +47,48 @@ export class ReisiftClient implements ReisiftClientInterface {
   }
 
   async authenticate(): Promise<void> {
+    // Check for API key first (takes priority)
+    const apiKey = this.config.apiKey ?? process.env['REISIFT_API_KEY'];
+
+    if (apiKey) {
+      return this.authenticateWithApiKey(apiKey);
+    }
+
+    // Fall back to email/password login
     const email = this.config.email ?? process.env['REISIFT_EMAIL'];
     const password = this.config.password ?? process.env['REISIFT_PASSWORD'];
 
     if (!email || !password) {
       throw new Error(
-        'Missing authentication credentials. Provide email/password via config or REISIFT_EMAIL/REISIFT_PASSWORD environment variables.'
+        'Missing authentication credentials. Provide apiKey, or email/password via config or environment variables (REISIFT_API_KEY, or REISIFT_EMAIL + REISIFT_PASSWORD).'
       );
     }
 
+    return this.authenticateWithEmailPassword(email, password);
+  }
+
+  private async authenticateWithApiKey(apiKey: string): Promise<void> {
+    logger.info('Authenticating with API key...');
+
+    // Set the token first so we can use the request method
+    this.accessToken = apiKey;
+    this.authMode = 'api_key';
+
+    try {
+      // Validate by calling the user endpoint
+      await this.getCurrentUser();
+      logger.info('API key authentication successful');
+    } catch (error) {
+      // Reset on failure
+      this.accessToken = null;
+      this.authMode = 'none';
+      const errorText = error instanceof Error ? error.message : String(error);
+      logger.error('API key authentication failed', error as Error);
+      throw new Error(`API key authentication failed: ${errorText}`);
+    }
+  }
+
+  private async authenticateWithEmailPassword(email: string, password: string): Promise<void> {
     const loginRequest: LoginRequest = {
       email,
       password,
@@ -52,7 +97,7 @@ export class ReisiftClient implements ReisiftClientInterface {
     };
 
     try {
-      logger.info('Authenticating with REISift API...');
+      logger.info('Authenticating with email/password...');
 
       const response = await fetch(`${this.baseUrl}/api/token/`, {
         method: 'POST',
@@ -70,8 +115,9 @@ export class ReisiftClient implements ReisiftClientInterface {
       const tokens = (await response.json()) as TokenPair;
       this.accessToken = tokens.access;
       this.refreshToken = tokens.refresh;
+      this.authMode = 'jwt';
 
-      logger.info('Authentication successful');
+      logger.info('Email/password authentication successful');
     } catch (error) {
       const errorText = error instanceof Error ? error.message : String(error);
       logger.error('Authentication failed', error as Error);
@@ -79,7 +125,21 @@ export class ReisiftClient implements ReisiftClientInterface {
     }
   }
 
+  /**
+   * Get the current authenticated user.
+   * Also used internally to validate API key authentication.
+   */
+  async getCurrentUser(): Promise<UserResponse> {
+    return this.request<UserResponse>('/api/internal/user/');
+  }
+
   private async refreshAccessToken(): Promise<boolean> {
+    // API key mode doesn't support refresh
+    if (this.authMode === 'api_key') {
+      logger.warn('API key mode does not support token refresh');
+      return false;
+    }
+
     if (!this.refreshToken) {
       logger.warn('No refresh token available');
       return false;
@@ -106,6 +166,7 @@ export class ReisiftClient implements ReisiftClientInterface {
         logger.warn('Token refresh failed, re-authentication required');
         this.accessToken = null;
         this.refreshToken = null;
+        this.authMode = 'none';
         return false;
       }
 
@@ -148,6 +209,9 @@ export class ReisiftClient implements ReisiftClientInterface {
     });
 
     if (response.status === 401 && retryOnUnauthorized) {
+      if (this.authMode === 'api_key') {
+        throw new Error('API key is invalid or expired. Please check your API key.');
+      }
       const refreshed = await this.refreshAccessToken();
       if (refreshed) {
         return this.request<T>(endpoint, options, false);
@@ -211,5 +275,36 @@ export class ReisiftClient implements ReisiftClientInterface {
     return this.request<PropertyOffersResponse>(
       `/api/internal/property/${uuid}/offer/?offset=0&limit=999&ordering=-created`
     );
+  }
+
+  async searchAutocomplete(search: string): Promise<SearchAutocompleteResponse> {
+    if (!this.accessToken) {
+      throw new Error('Not authenticated. Call authenticate() first.');
+    }
+
+    const response = await fetch(`${MAP_BASE_URL}/properties/search-autocomplete/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${this.accessToken}`,
+        'x-reisift-ui-version': UI_VERSION_HEADER,
+      },
+      body: JSON.stringify({ search }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Search autocomplete failed: ${response.status} ${response.statusText} - ${errorText}`);
+    }
+
+    const json = await response.json() as { data: SearchAutocompleteResponse };
+    return json.data;
+  }
+
+  async getAddressInfoFromMapId(mapId: string): Promise<AddressInfoFromMapIdResponse> {
+    return this.request<AddressInfoFromMapIdResponse>('/api/internal/property/address-info-from-map-id/', {
+      method: 'POST',
+      body: JSON.stringify({ map_id: mapId }),
+    });
   }
 }

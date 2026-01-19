@@ -1,5 +1,5 @@
 {
-  "name": "@reisift/sdk",
+  "name": "@dsanchez.co/reisift-sdk",
   "version": "0.1.0",
   "description": "TypeScript SDK for the Reisift API",
   "type": "module",
@@ -20,6 +20,9 @@
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "build:check": "tsc --noEmit",
+    "typecheck": "tsc --noEmit && tsc -p tsconfig.scripts.json --noEmit",
+    "typecheck:src": "tsc --noEmit",
+    "typecheck:scripts": "tsc -p tsconfig.scripts.json --noEmit",
     "prepublishOnly": "npm run build",
     "parse-har": "tsx scripts/parse-har.ts",
     "smoke-test": "tsx scripts/smoke-test.ts"

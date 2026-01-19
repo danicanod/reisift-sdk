@@ -6,34 +6,50 @@ async function main() {
   console.log('REISift SDK Smoke Test');
   console.log('======================\n');
 
+  const apiKey = process.env['REISIFT_API_KEY'];
   const email = process.env['REISIFT_EMAIL'];
   const password = process.env['REISIFT_PASSWORD'];
 
-  if (!email || !password) {
-    console.error('Missing credentials. Set REISIFT_EMAIL and REISIFT_PASSWORD environment variables.');
-    console.log('\nUsage:');
+  // Determine auth mode
+  let authMode: string;
+  let client: ReisiftClient;
+
+  if (apiKey) {
+    authMode = 'API key';
+    client = new ReisiftClient({ apiKey });
+  } else if (email && password) {
+    authMode = 'email/password';
+    client = new ReisiftClient({ email, password });
+  } else {
+    console.error('Missing credentials.');
+    console.log('\nUsage (choose one):');
+    console.log('  REISIFT_API_KEY=your_key npm run smoke-test');
     console.log('  REISIFT_EMAIL=you@example.com REISIFT_PASSWORD=xxx npm run smoke-test');
     process.exit(1);
   }
 
-  const client = new ReisiftClient({ email, password });
+  console.log(`Auth mode: ${authMode}\n`);
 
   try {
     console.log('1. Testing authentication...');
     await client.authenticate();
     console.log('   ✓ Authentication successful\n');
 
-    console.log('2. Testing getDashboard()...');
+    console.log('2. Testing getCurrentUser()...');
+    const user = await client.getCurrentUser();
+    console.log(`   ✓ Current user: ${user.email ?? user.uuid}\n`);
+
+    console.log('3. Testing getDashboard()...');
     const dashboard = await client.getDashboard();
     const dashboardKeys = Object.keys(dashboard);
     console.log(`   ✓ Dashboard returned ${dashboardKeys.length} keys: ${dashboardKeys.slice(0, 5).join(', ')}${dashboardKeys.length > 5 ? '...' : ''}\n`);
 
-    console.log('3. Testing getDashboardGeneral()...');
+    console.log('4. Testing getDashboardGeneral()...');
     const general = await client.getDashboardGeneral();
     const generalKeys = Object.keys(general);
     console.log(`   ✓ Dashboard general returned ${generalKeys.length} keys: ${generalKeys.slice(0, 5).join(', ')}${generalKeys.length > 5 ? '...' : ''}\n`);
 
-    console.log('4. Testing searchProperties()...');
+    console.log('5. Testing searchProperties()...');
     const properties = await client.searchProperties({ limit: 5 });
     console.log(`   ✓ Found ${properties.count} total properties`);
     console.log(`   ✓ Retrieved ${properties.results.length} properties in this page\n`);
@@ -42,19 +58,19 @@ async function main() {
       const firstProperty = properties.results[0];
       const propertyUuid = firstProperty.uuid;
 
-      console.log(`5. Testing getPropertyById("${propertyUuid}")...`);
+      console.log(`6. Testing getPropertyById("${propertyUuid}")...`);
       const property = await client.getPropertyById(propertyUuid);
       console.log(`   ✓ Property retrieved: ${property.address?.full_address ?? property.uuid}\n`);
 
-      console.log(`6. Testing getPropertyImages("${propertyUuid}")...`);
+      console.log(`7. Testing getPropertyImages("${propertyUuid}")...`);
       const images = await client.getPropertyImages(propertyUuid);
       console.log(`   ✓ Found ${images.count} images\n`);
 
-      console.log(`7. Testing getPropertyOffers("${propertyUuid}")...`);
+      console.log(`8. Testing getPropertyOffers("${propertyUuid}")...`);
       const offers = await client.getPropertyOffers(propertyUuid);
       console.log(`   ✓ Found ${offers.count} offers\n`);
     } else {
-      console.log('5-7. Skipped (no properties found to test with)\n');
+      console.log('6-8. Skipped (no properties found to test with)\n');
     }
 
     console.log('======================');
