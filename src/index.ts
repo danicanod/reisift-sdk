@@ -1,7 +1,7 @@
 /**
  * @reisift/sdk
  * 
- * A TypeScript SDK for the Reisift API.
+ * A TypeScript SDK for the REISift API.
  * 
  * @example
  * ```typescript
@@ -10,7 +10,7 @@
  * const client = new ReisiftClient();
  * await client.authenticate();
  * 
- * // Use the client to interact with Reisift API
+ * // Use the client to interact with the REISift API
  * ```
  */
 
@@ -37,13 +37,13 @@ export type {
   DashboardGeneralResponse,
   SearchAutocompleteResult,
   SearchAutocompleteResponse,
-  AddressInfoFromMapIdResponse,
+  AddressInfoByMapIdResponse,
   MapIdAddress,
   MapIdOwner,
   CreatePropertyAddress,
   CreatePropertyOwner,
   CreatePropertyRequest,
-  EnsurePropertyOptions,
+  EnsurePropertyByMapIdOptions,
   ApiError,
   Pagination,
   PaginatedResponse,

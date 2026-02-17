@@ -10,10 +10,10 @@ import type {
   PropertyImagesResponse,
   PropertyOffersResponse,
   SearchAutocompleteResponse,
-  AddressInfoFromMapIdResponse,
+  AddressInfoByMapIdResponse,
   UserResponse,
   CreatePropertyRequest,
-  EnsurePropertyOptions,
+  EnsurePropertyByMapIdOptions,
 } from '../../external/api/types.js';
 import { logger } from '../../shared/logger.js';
 
@@ -274,19 +274,19 @@ export class ReisiftClient implements ReisiftClientInterface {
     });
   }
 
-  async getPropertyById(uuid: string): Promise<Property> {
-    return this.request<Property>(`/api/internal/property/${uuid}/`);
+  async getPropertyByUuid(propertyUuid: string): Promise<Property> {
+    return this.request<Property>(`/api/internal/property/${propertyUuid}/`);
   }
 
-  async getPropertyImages(uuid: string): Promise<PropertyImagesResponse> {
+  async getPropertyImages(propertyUuid: string): Promise<PropertyImagesResponse> {
     return this.request<PropertyImagesResponse>(
-      `/api/internal/property/${uuid}/image/?offset=0&limit=999`
+      `/api/internal/property/${propertyUuid}/image/?offset=0&limit=999`
     );
   }
 
-  async getPropertyOffers(uuid: string): Promise<PropertyOffersResponse> {
+  async getPropertyOffers(propertyUuid: string): Promise<PropertyOffersResponse> {
     return this.request<PropertyOffersResponse>(
-      `/api/internal/property/${uuid}/offer/?offset=0&limit=999&ordering=-created`
+      `/api/internal/property/${propertyUuid}/offer/?offset=0&limit=999&ordering=-created`
     );
   }
 
@@ -314,8 +314,8 @@ export class ReisiftClient implements ReisiftClientInterface {
     return json.data;
   }
 
-  async getAddressInfoFromMapId(mapId: string): Promise<AddressInfoFromMapIdResponse> {
-    return this.request<AddressInfoFromMapIdResponse>('/api/internal/property/address-info-from-map-id/', {
+  async getAddressInfoByMapId(mapId: string): Promise<AddressInfoByMapIdResponse> {
+    return this.request<AddressInfoByMapIdResponse>('/api/internal/property/address-info-from-map-id/', {
       method: 'POST',
       body: JSON.stringify({ map_id: mapId }),
     });
@@ -329,15 +329,15 @@ export class ReisiftClient implements ReisiftClientInterface {
     });
   }
 
-  async ensurePropertyByMapId(mapId: string, options: EnsurePropertyOptions = {}): Promise<Property> {
+  async ensurePropertyByMapId(mapId: string, options: EnsurePropertyByMapIdOptions = {}): Promise<Property> {
     logger.debug('Ensuring property by map ID', { mapId });
 
     // Check if property already exists
-    const info = await this.getAddressInfoFromMapId(mapId);
+    const info = await this.getAddressInfoByMapId(mapId);
 
     if (info.saved_property_uuid) {
       logger.debug('Property already exists', { uuid: info.saved_property_uuid });
-      return this.getPropertyById(info.saved_property_uuid);
+      return this.getPropertyByUuid(info.saved_property_uuid);
     }
 
     // Property doesn't exist, create it

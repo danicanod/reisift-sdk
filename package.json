@@ -1,7 +1,7 @@
 {
-  "name": "@dsanchez.co/reisift-sdk",
-  "version": "0.2.0",
-  "description": "TypeScript SDK for the Reisift API",
+  "name": "@reisift/sdk",
+  "version": "0.3.0",
+  "description": "TypeScript SDK for the REISift API",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

@@ -1,6 +1,6 @@
 # @reisift/sdk
 
-A TypeScript SDK for the REISift API.
+A TypeScript SDK for the [REISift](https://www.reisift.io) API.
 
 ## Installation
 
@@ -119,11 +119,11 @@ The main client for interacting with the REISift API.
 | `getDashboard()` | Get dashboard data |
 | `getDashboardGeneral()` | Get general dashboard statistics |
 | `searchProperties(request?)` | Search for properties |
-| `getPropertyById(uuid)` | Get a property by UUID |
-| `getPropertyImages(uuid)` | Get images for a property |
-| `getPropertyOffers(uuid)` | Get offers for a property |
+| `getPropertyByUuid(propertyUuid)` | Get a property by UUID |
+| `getPropertyImages(propertyUuid)` | Get images for a property |
+| `getPropertyOffers(propertyUuid)` | Get offers for a property |
 | `searchAutocomplete(search)` | Search for addresses (uses map.reisift.io) |
-| `getAddressInfoFromMapId(mapId)` | Get address info from a map ID |
+| `getAddressInfoByMapId(mapId)` | Get address info by map ID |
 
 #### Properties
 
@@ -153,12 +153,26 @@ import type {
   DashboardGeneralResponse,
   SearchAutocompleteResult,
   SearchAutocompleteResponse,
-  AddressInfoFromMapIdResponse,
+  AddressInfoByMapIdResponse,
   ApiError,
   Pagination,
   PaginatedResponse,
 } from '@reisift/sdk';
 ```
+
+## Breaking changes in v0.3.0
+
+The package has been renamed from `@dsanchez.co/reisift-sdk` to `@reisift/sdk`. Several public methods and types have been renamed for naming consistency:
+
+| Before (v0.2.0) | After (v0.3.0) |
+|------------------|----------------|
+| `getPropertyById(uuid)` | `getPropertyByUuid(propertyUuid)` |
+| `getPropertyImages(uuid)` | `getPropertyImages(propertyUuid)` |
+| `getPropertyOffers(uuid)` | `getPropertyOffers(propertyUuid)` |
+| `getAddressInfoFromMapId(mapId)` | `getAddressInfoByMapId(mapId)` |
+| `AddressInfoFromMapIdRequest` | `AddressInfoByMapIdRequest` |
+| `AddressInfoFromMapIdResponse` | `AddressInfoByMapIdResponse` |
+| `EnsurePropertyOptions` | `EnsurePropertyByMapIdOptions` |
 
 ## Documentation
 

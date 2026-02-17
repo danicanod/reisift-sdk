@@ -59,8 +59,8 @@ async function main() {
       const firstProperty = properties.results[0];
       const propertyUuid = firstProperty.uuid;
 
-      console.log(`6. Testing getPropertyById("${propertyUuid}")...`);
-      const property = await client.getPropertyById(propertyUuid);
+      console.log(`6. Testing getPropertyByUuid("${propertyUuid}")...`);
+      const property = await client.getPropertyByUuid(propertyUuid);
       console.log(`   ✓ Property retrieved: ${property.address?.full_address ?? property.uuid}\n`);
 
       console.log(`7. Testing getPropertyImages("${propertyUuid}")...`);
@@ -86,8 +86,8 @@ async function main() {
       console.log(`   First result: ${firstResult.title ?? firstResult.address} (id: ${mapId})\n`);
 
       if (mapId) {
-        console.log(`10. Testing getAddressInfoFromMapId("${mapId}")...`);
-        const addressInfo = await client.getAddressInfoFromMapId(mapId);
+        console.log(`10. Testing getAddressInfoByMapId("${mapId}")...`);
+        const addressInfo = await client.getAddressInfoByMapId(mapId);
         console.log(`   ✓ Address: ${addressInfo.address?.street}, ${addressInfo.address?.city}, ${addressInfo.address?.state}`);
         console.log(`   ✓ Owner: ${addressInfo.owner?.first_name ?? 'N/A'} ${addressInfo.owner?.last_name ?? ''}`);
         console.log(`   ✓ Saved property UUID: ${addressInfo.saved_property_uuid ?? 'None (new address)'}\n`);

@@ -41,10 +41,10 @@
 |--------|--------|----------|-------------|------------|
 | ✅ | `POST` | `/api/internal/property/` | Search/list properties | `searchProperties()` |
 | ✅ | `POST` | `/api/internal/property/` | Create new property | `createProperty()` |
-| ✅ | `GET` | `/api/internal/property/{uuid}/` | Get single property | `getPropertyById()` |
+| ✅ | `GET` | `/api/internal/property/{uuid}/` | Get single property | `getPropertyByUuid()` |
 | ✅ | `GET` | `/api/internal/property/{uuid}/image/` | Get property images | `getPropertyImages()` |
 | ✅ | `GET` | `/api/internal/property/{uuid}/offer/` | Get property offers | `getPropertyOffers()` |
-| ✅ | `POST` | `/api/internal/property/address-info-from-map-id/` | Get property info from map ID | `getAddressInfoFromMapId()` |
+| ✅ | `POST` | `/api/internal/property/address-info-from-map-id/` | Get property info by map ID | `getAddressInfoByMapId()` |
 | ✅ | - | - | Ensure property exists by map ID | `ensurePropertyByMapId()` |
 | 📋 | `POST` | `/api/internal/property/{uuid}/next/` | Get next property | - |
 | 📋 | `POST` | `/api/internal/property/{uuid}/prev/` | Get previous property | - |
@@ -95,7 +95,7 @@ Note: Uses `x-http-method-override: GET` header with POST request.
 
 The `ensurePropertyByMapId(mapId, options?)` helper implements:
 
-1. Call `getAddressInfoFromMapId(mapId)` to check if property exists
+1. Call `getAddressInfoByMapId(mapId)` to check if property exists
 2. If `saved_property_uuid` is returned, fetch and return the existing property
 3. Otherwise, create a new property using the normalized address (and optionally owner) from the lookup
 
@@ -182,7 +182,7 @@ const property = await client.ensurePropertyByMapId(mapId, {
 }
 ```
 
-Returns an array of matching addresses with map IDs that can be used with `getAddressInfoFromMapId()`.
+Returns an array of matching addresses with map IDs that can be used with `getAddressInfoByMapId()`.
 
 ## Notifications
 

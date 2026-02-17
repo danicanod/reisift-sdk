@@ -7,10 +7,10 @@ import type {
   PropertyImagesResponse,
   PropertyOffersResponse,
   SearchAutocompleteResponse,
-  AddressInfoFromMapIdResponse,
+  AddressInfoByMapIdResponse,
   UserResponse,
   CreatePropertyRequest,
-  EnsurePropertyOptions,
+  EnsurePropertyByMapIdOptions,
 } from './types.js';
 
 export interface ReisiftClientInterface {
@@ -48,11 +48,11 @@ export interface ReisiftClientInterface {
 
   searchProperties(request?: PropertySearchRequest): Promise<PropertySearchResponse>;
 
-  getPropertyById(uuid: string): Promise<Property>;
+  getPropertyByUuid(propertyUuid: string): Promise<Property>;
 
-  getPropertyImages(uuid: string): Promise<PropertyImagesResponse>;
+  getPropertyImages(propertyUuid: string): Promise<PropertyImagesResponse>;
 
-  getPropertyOffers(uuid: string): Promise<PropertyOffersResponse>;
+  getPropertyOffers(propertyUuid: string): Promise<PropertyOffersResponse>;
 
   /**
    * Search for addresses using autocomplete
@@ -61,13 +61,13 @@ export interface ReisiftClientInterface {
   searchAutocomplete(search: string): Promise<SearchAutocompleteResponse>;
 
   /**
-   * Get detailed address/property info from a map ID
-   * Map IDs are returned from searchAutocomplete
+   * Get detailed address/property info by map ID.
+   * Map IDs are returned from searchAutocomplete.
    */
-  getAddressInfoFromMapId(mapId: string): Promise<AddressInfoFromMapIdResponse>;
+  getAddressInfoByMapId(mapId: string): Promise<AddressInfoByMapIdResponse>;
 
   /**
-   * Create a new property in Reisift
+   * Create a new property in REISift.
    */
   createProperty(request: CreatePropertyRequest): Promise<Property>;
 
@@ -81,5 +81,5 @@ export interface ReisiftClientInterface {
    * @param mapId - The map ID from searchAutocomplete results
    * @param options - Optional configuration for property creation
    */
-  ensurePropertyByMapId(mapId: string, options?: EnsurePropertyOptions): Promise<Property>;
+  ensurePropertyByMapId(mapId: string, options?: EnsurePropertyByMapIdOptions): Promise<Property>;
 }
