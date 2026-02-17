@@ -1,11 +1,39 @@
 #!/usr/bin/env npx ts-node
 
-import { readFileSync, writeFileSync } from 'fs';
+import { readFileSync, writeFileSync, mkdirSync, readdirSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+
+// Only include requests to first-party REISift hosts
+const ALLOWED_HOSTS = new Set([
+  'apiv2.reisift.io',
+  'map.reisift.io',
+  'notifications.reisift.io',
+  'app.reisift.io',
+]);
+
+// Fields/query params that should always be redacted from output
+const SENSITIVE_KEYS = new Set([
+  'email',
+  'firstname',
+  'first_name',
+  'lastname',
+  'last_name',
+  'userid',
+  'customuserid',
+  'user_id',
+  'account',
+  'password',
+  'access',
+  'refresh',
+  'token',
+  'authorization',
+  'cookie',
+  'set-cookie',
+]);
 
 interface HarEntry {
   request: {
@@ -46,6 +74,41 @@ interface ExtractedEndpoint {
   contentType: string;
 }
 
+function isSensitiveKey(key: string): boolean {
+  return SENSITIVE_KEYS.has(key.toLowerCase());
+}
+
+function redactObject(obj: unknown): unknown {
+  if (obj === null || obj === undefined) return obj;
+  if (typeof obj === 'string') return obj;
+  if (Array.isArray(obj)) return obj.map(redactObject);
+  if (typeof obj === 'object') {
+    const result: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(obj as Record<string, unknown>)) {
+      result[key] = isSensitiveKey(key) ? '[REDACTED]' : redactObject(value);
+    }
+    return result;
+  }
+  return obj;
+}
+
+function redactRecord(record: Record<string, string>): Record<string, string> {
+  const result: Record<string, string> = {};
+  for (const [key, value] of Object.entries(record)) {
+    result[key] = isSensitiveKey(key) ? '[REDACTED]' : value;
+  }
+  return result;
+}
+
+function isAllowedHost(urlStr: string): boolean {
+  try {
+    const url = new URL(urlStr);
+    return ALLOWED_HOSTS.has(url.hostname);
+  } catch {
+    return false;
+  }
+}
+
 function parseHarFile(harPath: string): ExtractedEndpoint[] {
   const harContent = readFileSync(harPath, 'utf-8');
   const har: HarFile = JSON.parse(harContent);
@@ -56,10 +119,7 @@ function parseHarFile(harPath: string): ExtractedEndpoint[] {
   for (const entry of har.log.entries) {
     const { request, response } = entry;
 
-    if (
-      !request.url.includes('reisift') &&
-      !request.url.includes('localhost')
-    ) {
+    if (!isAllowedHost(request.url)) {
       continue;
     }
 
@@ -78,7 +138,7 @@ function parseHarFile(harPath: string): ExtractedEndpoint[] {
     const path = url.pathname;
     const queryParams: Record<string, string> = {};
     url.searchParams.forEach((value, key) => {
-      queryParams[key] = value;
+      queryParams[key] = isSensitiveKey(key) ? '[REDACTED]' : value;
     });
 
     const endpointKey = `${request.method}:${path}`;
@@ -97,8 +157,8 @@ function parseHarFile(harPath: string): ExtractedEndpoint[] {
         lowerName === 'x-api-key' ||
         lowerName.startsWith('x-')
       ) {
-        requestHeaders[header.name] = lowerName === 'authorization' 
-          ? '[REDACTED]' 
+        requestHeaders[header.name] = isSensitiveKey(lowerName)
+          ? '[REDACTED]'
           : header.value;
       }
     }
@@ -106,7 +166,7 @@ function parseHarFile(harPath: string): ExtractedEndpoint[] {
     let requestBody: unknown;
     if (request.postData?.text) {
       try {
-        requestBody = JSON.parse(request.postData.text);
+        requestBody = redactObject(JSON.parse(request.postData.text));
       } catch {
         requestBody = request.postData.text;
       }
@@ -115,7 +175,7 @@ function parseHarFile(harPath: string): ExtractedEndpoint[] {
     let responseBody: unknown;
     if (response.content?.text) {
       try {
-        responseBody = JSON.parse(response.content.text);
+        responseBody = redactObject(JSON.parse(response.content.text));
       } catch {
         responseBody = response.content.text?.substring(0, 500);
       }
@@ -123,7 +183,7 @@ function parseHarFile(harPath: string): ExtractedEndpoint[] {
 
     endpoints.push({
       method: request.method,
-      url: request.url,
+      url: `${url.protocol}//${url.hostname}${path}`,
       path,
       queryParams,
       requestHeaders,
@@ -197,9 +257,8 @@ function generateMarkdownReport(endpoints: ExtractedEndpoint[]): string {
   return md;
 }
 
-import { readdirSync } from 'fs';
-
 const HAR_FILES_DIR = join(__dirname, '../har-files');
+const OUTPUT_DIR = join(__dirname, '../docs/api-mapping/_generated');
 
 function findHarFiles(): string[] {
   try {
@@ -260,11 +319,13 @@ const uniqueEndpoints = allEndpoints.filter((ep, idx, arr) =>
 
 console.log(`\nTotal unique endpoints: ${uniqueEndpoints.length}`);
 
+mkdirSync(OUTPUT_DIR, { recursive: true });
+
 const report = generateMarkdownReport(uniqueEndpoints);
-const outputPath = join(__dirname, '../docs/api-mapping/extracted-endpoints.md');
+const outputPath = join(OUTPUT_DIR, 'extracted-endpoints.md');
 writeFileSync(outputPath, report);
 console.log(`Report saved to: ${outputPath}`);
 
-const jsonPath = join(__dirname, '../docs/api-mapping/endpoints.json');
+const jsonPath = join(OUTPUT_DIR, 'endpoints.json');
 writeFileSync(jsonPath, JSON.stringify(uniqueEndpoints, null, 2));
 console.log(`JSON data saved to: ${jsonPath}`);

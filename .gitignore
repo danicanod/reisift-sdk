@@ -6,3 +6,12 @@ dist/
 .DS_Store
 tsconfig.tsbuildinfo
 tsconfig.build.tsbuildinfo
+
+# HAR files contain sensitive data (auth tokens, cookies, PII)
+har-files/
+
+# Generated API mapping outputs (may contain PII from HAR captures)
+docs/api-mapping/_generated/
+
+# Internal launch materials
+docs/launch/

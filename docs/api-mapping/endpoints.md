@@ -13,8 +13,6 @@
 
 ## Source files
 
-- Raw extraction: [extracted-endpoints.md](./extracted-endpoints.md)
-- Structured data: [endpoints.json](./endpoints.json)
 - SDK interface: [src/external/api/client.interface.ts](../../src/external/api/client.interface.ts)
 - SDK implementation: [src/infrastructure/services/reisift-client.ts](../../src/infrastructure/services/reisift-client.ts)
 
