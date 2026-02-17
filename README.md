@@ -162,7 +162,7 @@ import type {
 
 ## Documentation
 
-For a comprehensive map of the SDK's architecture, all exported types, endpoint inventory, internal flows, and sensitive notes, see **[docs/sdk-map.md](docs/sdk-map.md)**.
+For a comprehensive map of the SDK's architecture, all exported types, endpoint inventory, internal flows, and sensitive notes, see **[docs/sdk-map.md](docs/sdk-map.md)**. This document includes detailed appendices (A-G) with a line-by-line inventory of every constant, field, method, type, script, and configuration file.
 
 ## Development
 
