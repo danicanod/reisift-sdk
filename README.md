@@ -160,6 +160,10 @@ import type {
 } from '@reisift/sdk';
 ```
 
+## Documentation
+
+For a comprehensive map of the SDK's architecture, all exported types, endpoint inventory, internal flows, and sensitive notes, see **[docs/sdk-map.md](docs/sdk-map.md)**.
+
 ## Development
 
 ### Building
