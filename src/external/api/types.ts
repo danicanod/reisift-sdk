@@ -161,8 +161,8 @@ export interface SearchAutocompleteResult {
 
 export type SearchAutocompleteResponse = SearchAutocompleteResult[];
 
-// Address Info from Map ID
-export interface AddressInfoFromMapIdRequest {
+// Address Info by Map ID
+export interface AddressInfoByMapIdRequest {
   map_id: string;
 }
 
@@ -190,12 +190,12 @@ export interface MapIdOwner {
   address?: MapIdAddress;
 }
 
-export interface AddressInfoFromMapIdResponse {
+export interface AddressInfoByMapIdResponse {
   /** Normalized address from the map lookup */
   address?: MapIdAddress;
   /** Owner information if available */
   owner?: MapIdOwner;
-  /** UUID of an existing property if already saved in Reisift */
+  /** UUID of an existing property if already saved in REISift */
   saved_property_uuid?: string;
   [key: string]: unknown;
 }
@@ -245,7 +245,7 @@ export interface CreatePropertyRequest {
 }
 
 /** Options for ensurePropertyByMapId helper */
-export interface EnsurePropertyOptions {
+export interface EnsurePropertyByMapIdOptions {
   /** UUID of user to assign the property to (if creating) */
   assigned_to?: string;
   /** Property status (if creating) */

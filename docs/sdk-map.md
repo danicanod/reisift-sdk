@@ -1,8 +1,8 @@
-# SDK Map — @dsanchez.co/reisift-sdk
+# SDK Map — @reisift/sdk
 
-> **Version documented:** 0.2.0
+> **Version documented:** 0.3.0
 > **Last updated:** 2026-02-17
-> **Package name:** `@dsanchez.co/reisift-sdk`
+> **Package name:** `@reisift/sdk`
 
 ---
 
@@ -21,7 +21,24 @@ This SDK is an **unofficial** TypeScript client for the [REISift](https://www.re
 
 ---
 
-## 2. Repository structure
+## 2. Naming contract
+
+This section defines the naming rules followed across the SDK. All code, types, and documentation should be consistent with these conventions.
+
+| Context | Convention | Examples |
+|---------|-----------|----------|
+| **Product/brand in prose** | `REISift` (official brand casing) | "the REISift API", "REISift web app" |
+| **npm package name** | `@reisift/sdk` | `npm install @reisift/sdk` |
+| **Classes / types / interfaces** | PascalCase, prefixed with `Reisift` only for the top-level client | `ReisiftClient`, `PropertySearchResponse` |
+| **Methods / params / variables** | camelCase | `searchProperties()`, `propertyUuid` |
+| **Boolean options** | camelCase, affirmative | `includeOwner` (not `withOwner` or `include_owner`) |
+| **Lookups by key** | `ByX` suffix (not `FromX`) | `getPropertyByUuid()`, `getAddressInfoByMapId()` |
+| **Wire JSON field names** | Keep upstream casing (snake_case) inside API-shape types | `postal_code`, `map_id`, `first_name` |
+| **Parameter naming** | Qualify generic identifiers with their domain | `propertyUuid` (not bare `uuid`) |
+
+---
+
+## 3. Repository structure
 
 ```
 sdk/
@@ -73,22 +90,22 @@ sdk/
 
 ---
 
-## 3. Public API (exports from `src/index.ts`)
+## 4. Public API (exports from `src/index.ts`)
 
-### 3.1 Main class
+### 4.1 Main class
 
 | Export | Kind | Source |
 |--------|------|--------|
 | `ReisiftClient` | class | `src/infrastructure/services/reisift-client.ts` |
 
-### 3.2 Client types
+### 4.2 Client types
 
 | Export | Kind | Source |
 |--------|------|--------|
 | `ReisiftClientConfig` | interface | `src/infrastructure/services/reisift-client.ts` |
 | `ReisiftClientInterface` | interface | `src/external/api/client.interface.ts` |
 
-### 3.3 API types
+### 4.3 API types
 
 All defined in `src/external/api/types.ts`:
 
@@ -108,18 +125,18 @@ All defined in `src/external/api/types.ts`:
 | `DashboardGeneralResponse` | General dashboard statistics |
 | `SearchAutocompleteResult` | Single autocomplete result |
 | `SearchAutocompleteResponse` | Array of autocomplete results |
-| `AddressInfoFromMapIdResponse` | Detailed address/owner info from map ID |
+| `AddressInfoByMapIdResponse` | Detailed address/owner info from map ID |
 | `MapIdAddress` | Address structure from map ID |
 | `MapIdOwner` | Owner structure from map ID |
 | `CreatePropertyAddress` | Address for property creation |
 | `CreatePropertyOwner` | Owner for property creation |
 | `CreatePropertyRequest` | Payload for property creation |
-| `EnsurePropertyOptions` | Options for `ensurePropertyByMapId()` |
+| `EnsurePropertyByMapIdOptions` | Options for `ensurePropertyByMapId()` |
 | `ApiError` | Structured API error |
 | `Pagination` | Generic pagination parameters |
 | `PaginatedResponse<T>` | Generic paginated response |
 
-### 3.4 Logger
+### 4.4 Logger
 
 | Export | Kind | Source |
 |--------|------|--------|
@@ -127,7 +144,7 @@ All defined in `src/external/api/types.ts`:
 | `Logger` | interface | `src/shared/logger.ts` |
 | `LogContext` | interface | `src/shared/logger.ts` |
 
-### 3.5 Internal types (NOT publicly exported)
+### 4.5 Internal types (NOT publicly exported)
 
 These types are used internally but not exposed from `src/index.ts`:
 
@@ -139,14 +156,14 @@ These types are used internally but not exposed from `src/index.ts`:
 | `RefreshResponse` | `types.ts` | Refresh response |
 | `PropertySearchQuery` | `types.ts` | Query with must/must_not/should |
 | `SearchAutocompleteRequest` | `types.ts` | Autocomplete payload |
-| `AddressInfoFromMapIdRequest` | `types.ts` | Address-info-from-map-id payload |
+| `AddressInfoByMapIdRequest` | `types.ts` | Address-info-from-map-id payload |
 | `AuthMode` | `reisift-client.ts` | `'none' \| 'api_key' \| 'jwt'` |
 
 ---
 
-## 4. Functional domains
+## 5. Functional domains
 
-### 4.1 Authentication
+### 5.1 Authentication
 
 **Files:** `reisift-client.ts` (methods), `types.ts` (types)
 
@@ -164,7 +181,7 @@ These types are used internally but not exposed from `src/index.ts`:
 - `POST /api/token/` -- Login with email/password
 - `POST /api/token/refresh/` -- Access token refresh
 
-### 4.2 HTTP Client (request engine)
+### 5.2 HTTP Client (request engine)
 
 **Files:** `reisift-client.ts`
 
@@ -181,7 +198,7 @@ These types are used internally but not exposed from `src/index.ts`:
 - Main API: `https://apiv2.reisift.io` (configurable via `baseUrl` / `REISIFT_BASE_URL`)
 - Map service: `https://map.reisift.io` (hardcoded, only for `searchAutocomplete`)
 
-### 4.3 User
+### 5.3 User
 
 **Files:** `reisift-client.ts`
 
@@ -189,7 +206,7 @@ These types are used internally but not exposed from `src/index.ts`:
 |--------|----------|-------------|
 | `getCurrentUser()` | `GET /api/internal/user/` | Gets authenticated user. Also validates API keys |
 
-### 4.4 Dashboard
+### 5.4 Dashboard
 
 **Files:** `reisift-client.ts`
 
@@ -198,16 +215,16 @@ These types are used internally but not exposed from `src/index.ts`:
 | `getDashboard()` | `GET /api/internal/dashboard/` | Dashboard data |
 | `getDashboardGeneral()` | `GET /api/internal/dashboard/general/` | General statistics |
 
-### 4.5 Properties (CRUD + Search)
+### 5.5 Properties (CRUD + Search)
 
 **Files:** `reisift-client.ts`, `types.ts`
 
 | Method | Endpoint | HTTP | Description |
 |--------|----------|------|-------------|
 | `searchProperties(request?)` | `/api/internal/property/` | POST (with `x-http-method-override: GET`) | Search with filters, pagination, ordering |
-| `getPropertyById(uuid)` | `/api/internal/property/{uuid}/` | GET | Property by UUID |
-| `getPropertyImages(uuid)` | `/api/internal/property/{uuid}/image/` | GET | Property images |
-| `getPropertyOffers(uuid)` | `/api/internal/property/{uuid}/offer/` | GET | Property offers |
+| `getPropertyByUuid(propertyUuid)` | `/api/internal/property/{uuid}/` | GET | Property by UUID |
+| `getPropertyImages(propertyUuid)` | `/api/internal/property/{uuid}/image/` | GET | Property images |
+| `getPropertyOffers(propertyUuid)` | `/api/internal/property/{uuid}/offer/` | GET | Property offers |
 | `createProperty(request)` | `/api/internal/property/` | POST | Create new property |
 | `ensurePropertyByMapId(mapId, options?)` | (composite) | -- | Workflow: looks up by mapId, returns existing or creates new |
 
@@ -219,24 +236,24 @@ These types are used internally but not exposed from `src/index.ts`:
 - `ordering`: `-list_count`
 - `query`: `{ must: { property_type: 'clean' } }`
 
-### 4.6 Map / Geocoding
+### 5.6 Map / Geocoding
 
 **Files:** `reisift-client.ts`, `types.ts`
 
 | Method | Endpoint | Host | Description |
 |--------|----------|------|-------------|
 | `searchAutocomplete(search)` | `POST /properties/search-autocomplete/` | `map.reisift.io` | Address autocomplete |
-| `getAddressInfoFromMapId(mapId)` | `POST /api/internal/property/address-info-from-map-id/` | `apiv2.reisift.io` | Detailed address + owner info from map ID |
+| `getAddressInfoByMapId(mapId)` | `POST /api/internal/property/address-info-from-map-id/` | `apiv2.reisift.io` | Detailed address + owner info from map ID |
 
 **Note:** `searchAutocomplete` does not use the generic `request()` method; it makes its own direct `fetch` to `map.reisift.io`.
 
-### 4.7 Error handling
+### 5.7 Error handling
 
 - HTTP errors are thrown as `Error` with format: `"API request failed: {status} {statusText} - {body}"`.
 - On 401: if mode is `api_key`, error is thrown immediately. If mode is `jwt`, attempts refresh and retries once.
 - The `ApiError` type is exported for consumer use (not instantiated internally).
 
-### 4.8 Logger
+### 5.8 Logger
 
 **Files:** `src/shared/logger.ts`
 
@@ -251,7 +268,7 @@ These types are used internally but not exposed from `src/index.ts`:
 
 **Configuration:** Environment variable `LOG_LEVEL` (values: `debug`, `info`, `warn`, `error`; default: `info`).
 
-### 4.9 Configuration
+### 5.9 Configuration
 
 **Interface `ReisiftClientConfig`:**
 
@@ -274,9 +291,9 @@ These types are used internally but not exposed from `src/index.ts`:
 
 ---
 
-## 5. Key workflows
+## 6. Key workflows
 
-### 5.1 authenticate()
+### 6.1 authenticate()
 
 ```mermaid
 flowchart TD
@@ -297,7 +314,7 @@ flowchart TD
     StoreTokens --> DoneJwt["Authenticated"]
 ```
 
-### 5.2 request() — HTTP engine with 401 retry
+### 6.2 request() — HTTP engine with 401 retry
 
 ```mermaid
 flowchart TD
@@ -317,13 +334,13 @@ flowchart TD
     CheckStatus -->|OK + other| ReturnText["return response.text()"]
 ```
 
-### 5.3 ensurePropertyByMapId() — Composite workflow
+### 6.3 ensurePropertyByMapId() — Composite workflow
 
 ```mermaid
 flowchart TD
-    Start["ensurePropertyByMapId(mapId, options)"] --> Lookup["getAddressInfoFromMapId(mapId)"]
+    Start["ensurePropertyByMapId(mapId, options)"] --> Lookup["getAddressInfoByMapId(mapId)"]
     Lookup --> CheckExists{"info.saved_property_uuid\nexists?"}
-    CheckExists -->|Yes| GetExisting["getPropertyById(uuid)"]
+    CheckExists -->|Yes| GetExisting["getPropertyByUuid(propertyUuid)"]
     GetExisting --> ReturnExisting["return existing property"]
 
     CheckExists -->|No| CheckAddress{"info.address\navailable?"}
@@ -340,7 +357,7 @@ flowchart TD
 
 ---
 
-## 6. Implemented endpoint map
+## 7. Implemented endpoint map
 
 | SDK Method | HTTP | Endpoint | Host |
 |------------|------|----------|------|
@@ -350,18 +367,18 @@ flowchart TD
 | `getDashboard` | GET | `/api/internal/dashboard/` | apiv2.reisift.io |
 | `getDashboardGeneral` | GET | `/api/internal/dashboard/general/` | apiv2.reisift.io |
 | `searchProperties` | POST* | `/api/internal/property/` | apiv2.reisift.io |
-| `getPropertyById` | GET | `/api/internal/property/{uuid}/` | apiv2.reisift.io |
+| `getPropertyByUuid` | GET | `/api/internal/property/{uuid}/` | apiv2.reisift.io |
 | `getPropertyImages` | GET | `/api/internal/property/{uuid}/image/` | apiv2.reisift.io |
 | `getPropertyOffers` | GET | `/api/internal/property/{uuid}/offer/` | apiv2.reisift.io |
 | `createProperty` | POST | `/api/internal/property/` | apiv2.reisift.io |
 | `searchAutocomplete` | POST | `/properties/search-autocomplete/` | map.reisift.io |
-| `getAddressInfoFromMapId` | POST | `/api/internal/property/address-info-from-map-id/` | apiv2.reisift.io |
+| `getAddressInfoByMapId` | POST | `/api/internal/property/address-info-from-map-id/` | apiv2.reisift.io |
 
 \* `searchProperties` uses POST with header `x-http-method-override: GET`.
 
 ---
 
-## 7. Build, scripts, and tooling
+## 8. Build, scripts, and tooling
 
 ### Compilation
 
@@ -404,7 +421,7 @@ flowchart TD
 
 ---
 
-## 8. Existing documentation inventory
+## 9. Existing documentation inventory
 
 | File | Content | Status |
 |------|---------|--------|
@@ -423,18 +440,18 @@ flowchart TD
 
 ---
 
-## 9. Sensitive / internal notes
+## 10. Sensitive / internal notes
 
 > **WARNING:** This SDK was built through reverse engineering. This section documents risks and how to handle sensitive information.
 
-### 9.1 Data origin
+### 10.1 Data origin
 
 The endpoints and types were discovered through:
 1. **HAR captures** from the REISift web app (`app.reisift.io`).
 2. **Manual inspection** of requests/responses.
 3. **Trial and error** with different payloads.
 
-### 9.2 Files containing sensitive information
+### 10.2 Files containing sensitive information
 
 | File | Risk | Recommended action |
 |------|------|--------------------|
@@ -443,7 +460,7 @@ The endpoints and types were discovered through:
 | `docs/launch/copywriter-context.md` | References PII from HAR files | Untracked; keep out of git |
 | `scripts/parse-har.ts` | Processes HAR files that may contain credentials | Do not include HAR files in the repo |
 
-### 9.3 Known risks
+### 10.3 Known risks
 
 - **API stability:** The `/api/internal/*` endpoints are REISift's private API. They may change without notice.
 - **Header `x-reisift-ui-version`:** Currently hardcoded as `2022.02.01.7`. If REISift starts validating it strictly, it could break the SDK.
@@ -451,7 +468,7 @@ The endpoints and types were discovered through:
 - **Rate limiting:** No rate limiting has been discovered, but it may exist. The SDK does not implement backoff/retry (except for 401).
 - **PII in logs:** The logger may print sensitive data when used with `LOG_LEVEL=debug`. Review before enabling in production.
 
-### 9.4 Discovered but NOT implemented endpoints
+### 10.4 Discovered but NOT implemented endpoints
 
 The following endpoints were observed in HAR but are not implemented in the SDK:
 
@@ -489,10 +506,10 @@ The following endpoints were observed in HAR but are not implemented in the SDK:
 | `PropertyImagesResponse` | type | `../../external/api/types.js` |
 | `PropertyOffersResponse` | type | `../../external/api/types.js` |
 | `SearchAutocompleteResponse` | type | `../../external/api/types.js` |
-| `AddressInfoFromMapIdResponse` | type | `../../external/api/types.js` |
+| `AddressInfoByMapIdResponse` | type | `../../external/api/types.js` |
 | `UserResponse` | type | `../../external/api/types.js` |
 | `CreatePropertyRequest` | type | `../../external/api/types.js` |
-| `EnsurePropertyOptions` | type | `../../external/api/types.js` |
+| `EnsurePropertyByMapIdOptions` | type | `../../external/api/types.js` |
 | `logger` | value | `../../shared/logger.js` |
 
 ### A.2 Module-level constants
@@ -705,20 +722,20 @@ async searchProperties(request: PropertySearchRequest = {}): Promise<PropertySea
 | **Body** | `{ limit, offset, ordering, query: query ?? { must: { property_type: 'clean' } } }` |
 | **Default query** | `{ must: { property_type: 'clean' } }` if no `query` is passed |
 
-#### `getPropertyById(uuid)` — public async
+#### `getPropertyByUuid(propertyUuid)` — public async
 
 ```typescript
-async getPropertyById(uuid: string): Promise<Property>
+async getPropertyByUuid(propertyUuid: string): Promise<Property>
 ```
 
 | Aspect | Detail |
 |--------|--------|
 | **Endpoint** | `GET /api/internal/property/{uuid}/` (via `request()`) |
 
-#### `getPropertyImages(uuid)` — public async
+#### `getPropertyImages(propertyUuid)` — public async
 
 ```typescript
-async getPropertyImages(uuid: string): Promise<PropertyImagesResponse>
+async getPropertyImages(propertyUuid: string): Promise<PropertyImagesResponse>
 ```
 
 | Aspect | Detail |
@@ -726,10 +743,10 @@ async getPropertyImages(uuid: string): Promise<PropertyImagesResponse>
 | **Endpoint** | `GET /api/internal/property/{uuid}/image/?offset=0&limit=999` (via `request()`) |
 | **Hardcoded pagination** | `offset=0`, `limit=999` (fetches all) |
 
-#### `getPropertyOffers(uuid)` — public async
+#### `getPropertyOffers(propertyUuid)` — public async
 
 ```typescript
-async getPropertyOffers(uuid: string): Promise<PropertyOffersResponse>
+async getPropertyOffers(propertyUuid: string): Promise<PropertyOffersResponse>
 ```
 
 | Aspect | Detail |
@@ -753,10 +770,10 @@ async searchAutocomplete(search: string): Promise<SearchAutocompleteResponse>
 | **Response parsing** | Parses as `{ data: SearchAutocompleteResponse }`, returns `.data` |
 | **May throw** | `Error('Not authenticated...')`, `Error('Search autocomplete failed: ...')` |
 
-#### `getAddressInfoFromMapId(mapId)` — public async
+#### `getAddressInfoByMapId(mapId)` — public async
 
 ```typescript
-async getAddressInfoFromMapId(mapId: string): Promise<AddressInfoFromMapIdResponse>
+async getAddressInfoByMapId(mapId: string): Promise<AddressInfoByMapIdResponse>
 ```
 
 | Aspect | Detail |
@@ -779,12 +796,12 @@ async createProperty(request: CreatePropertyRequest): Promise<Property>
 #### `ensurePropertyByMapId(mapId, options?)` — public async
 
 ```typescript
-async ensurePropertyByMapId(mapId: string, options: EnsurePropertyOptions = {}): Promise<Property>
+async ensurePropertyByMapId(mapId: string, options: EnsurePropertyByMapIdOptions = {}): Promise<Property>
 ```
 
 | Aspect | Detail |
 |--------|--------|
-| **Internal methods called** | `getAddressInfoFromMapId(mapId)`, `getPropertyById(uuid)` (if exists), `createProperty(request)` (if not) |
+| **Internal methods called** | `getAddressInfoByMapId(mapId)`, `getPropertyByUuid(propertyUuid)` (if exists), `createProperty(request)` (if not) |
 | **Default parameter** | `options = {}` |
 | **Options destructuring** | `{ includeOwner = true, ...createOptions }` |
 | **May throw** | `Error('Address info not returned from map ID lookup')` if `!info.address` |
@@ -804,11 +821,11 @@ async ensurePropertyByMapId(mapId: string, options: EnsurePropertyOptions = {}):
 | `getDashboard` | GET | `/api/internal/dashboard/` | apiv2 | (none) | via `request()` |
 | `getDashboardGeneral` | GET | `/api/internal/dashboard/general/` | apiv2 | (none) | via `request()` |
 | `searchProperties` | POST | `/api/internal/property/` | apiv2 | `x-http-method-override: GET` | via `request()` |
-| `getPropertyById` | GET | `/api/internal/property/{uuid}/` | apiv2 | (none) | via `request()` |
+| `getPropertyByUuid` | GET | `/api/internal/property/{uuid}/` | apiv2 | (none) | via `request()` |
 | `getPropertyImages` | GET | `/api/internal/property/{uuid}/image/` | apiv2 | (none) | via `request()` |
 | `getPropertyOffers` | GET | `/api/internal/property/{uuid}/offer/` | apiv2 | (none) | via `request()` |
 | `searchAutocomplete` | POST | `/properties/search-autocomplete/` | map | (none) | `'Not authenticated...'`, `'Search autocomplete failed: ...'` |
-| `getAddressInfoFromMapId` | POST | `/api/internal/property/address-info-from-map-id/` | apiv2 | (none) | via `request()` |
+| `getAddressInfoByMapId` | POST | `/api/internal/property/address-info-from-map-id/` | apiv2 | (none) | via `request()` |
 | `createProperty` | POST | `/api/internal/property/` | apiv2 | (none) | via `request()` |
 | `ensurePropertyByMapId` | (composite) | (multiple) | apiv2 | (none) | `'Address info not returned...'` + delegated |
 
@@ -820,7 +837,7 @@ async ensurePropertyByMapId(mapId: string, options: EnsurePropertyOptions = {}):
 
 ### B.1 Imports (type-only)
 
-`DashboardResponse`, `DashboardGeneralResponse`, `PropertySearchRequest`, `PropertySearchResponse`, `Property`, `PropertyImagesResponse`, `PropertyOffersResponse`, `SearchAutocompleteResponse`, `AddressInfoFromMapIdResponse`, `UserResponse`, `CreatePropertyRequest`, `EnsurePropertyOptions` — all from `./types.js`.
+`DashboardResponse`, `DashboardGeneralResponse`, `PropertySearchRequest`, `PropertySearchResponse`, `Property`, `PropertyImagesResponse`, `PropertyOffersResponse`, `SearchAutocompleteResponse`, `AddressInfoByMapIdResponse`, `UserResponse`, `CreatePropertyRequest`, `EnsurePropertyByMapIdOptions` — all from `./types.js`.
 
 ### B.2 Interface members (declaration order)
 
@@ -834,13 +851,13 @@ async ensurePropertyByMapId(mapId: string, options: EnsurePropertyOptions = {}):
 | 6 | `getDashboard()` | `(): Promise<DashboardResponse>` | (no doc) |
 | 7 | `getDashboardGeneral()` | `(): Promise<DashboardGeneralResponse>` | (no doc) |
 | 8 | `searchProperties()` | `(request?: PropertySearchRequest): Promise<PropertySearchResponse>` | (no doc) |
-| 9 | `getPropertyById()` | `(uuid: string): Promise<Property>` | (no doc) |
-| 10 | `getPropertyImages()` | `(uuid: string): Promise<PropertyImagesResponse>` | (no doc) |
-| 11 | `getPropertyOffers()` | `(uuid: string): Promise<PropertyOffersResponse>` | (no doc) |
+| 9 | `getPropertyByUuid()` | `(propertyUuid: string): Promise<Property>` | (no doc) |
+| 10 | `getPropertyImages()` | `(propertyUuid: string): Promise<PropertyImagesResponse>` | (no doc) |
+| 11 | `getPropertyOffers()` | `(propertyUuid: string): Promise<PropertyOffersResponse>` | (no doc) |
 | 12 | `searchAutocomplete()` | `(search: string): Promise<SearchAutocompleteResponse>` | Uses map.reisift.io |
-| 13 | `getAddressInfoFromMapId()` | `(mapId: string): Promise<AddressInfoFromMapIdResponse>` | Map IDs from searchAutocomplete |
+| 13 | `getAddressInfoByMapId()` | `(mapId: string): Promise<AddressInfoByMapIdResponse>` | Map IDs from searchAutocomplete |
 | 14 | `createProperty()` | `(request: CreatePropertyRequest): Promise<Property>` | Create new property |
-| 15 | `ensurePropertyByMapId()` | `(mapId: string, options?: EnsurePropertyOptions): Promise<Property>` | Get existing or create new |
+| 15 | `ensurePropertyByMapId()` | `(mapId: string, options?: EnsurePropertyByMapIdOptions): Promise<Property>` | Get existing or create new |
 
 ---
 
@@ -1072,9 +1089,9 @@ type SearchAutocompleteResponse = SearchAutocompleteResult[]
 
 Type alias (not an interface). An array of `SearchAutocompleteResult`.
 
-### C.11 Address Info from Map ID
+### C.11 Address Info by Map ID
 
-#### `AddressInfoFromMapIdRequest`
+#### `AddressInfoByMapIdRequest`
 
 | Field | Type | Required | Notes |
 |-------|------|----------|-------|
@@ -1106,7 +1123,7 @@ Type alias (not an interface). An array of `SearchAutocompleteResult`.
 | `company` | `string \| null` | No | Can be explicitly null |
 | `address` | `MapIdAddress` | No | Owner's address |
 
-#### `AddressInfoFromMapIdResponse`
+#### `AddressInfoByMapIdResponse`
 
 | Field | Type | Required | Notes |
 |-------|------|----------|-------|
@@ -1153,7 +1170,7 @@ Type alias (not an interface). An array of `SearchAutocompleteResult`.
 | `notes` | `string` | No | Notes |
 | `owner` | `CreatePropertyOwner` | No | Owner information |
 
-#### `EnsurePropertyOptions`
+#### `EnsurePropertyByMapIdOptions`
 
 | Field | Type | Required | SDK default | Notes |
 |-------|------|----------|-------------|-------|
@@ -1348,7 +1365,7 @@ flowchart TD
 
 Re-exports **all** types from `../types.js` (31 types total, including those not publicly exported):
 
-`LoginRequest`, `TokenPair`, `RefreshRequest`, `RefreshResponse`, `Pagination`, `PaginatedResponse`, `DashboardResponse`, `DashboardGeneralResponse`, `PropertySearchQuery`, `PropertySearchRequest`, `PropertyAddress`, `PropertyOwner`, `Property`, `PropertySearchResponse`, `PropertyImage`, `PropertyImagesResponse`, `PropertyOffer`, `PropertyOffersResponse`, `ApiError`, `UserResponse`, `SearchAutocompleteRequest`, `SearchAutocompleteResult`, `SearchAutocompleteResponse`, `AddressInfoFromMapIdRequest`, `AddressInfoFromMapIdResponse`, `MapIdAddress`, `MapIdOwner`, `CreatePropertyAddress`, `CreatePropertyOwner`, `CreatePropertyRequest`, `EnsurePropertyOptions`.
+`LoginRequest`, `TokenPair`, `RefreshRequest`, `RefreshResponse`, `Pagination`, `PaginatedResponse`, `DashboardResponse`, `DashboardGeneralResponse`, `PropertySearchQuery`, `PropertySearchRequest`, `PropertyAddress`, `PropertyOwner`, `Property`, `PropertySearchResponse`, `PropertyImage`, `PropertyImagesResponse`, `PropertyOffer`, `PropertyOffersResponse`, `ApiError`, `UserResponse`, `SearchAutocompleteRequest`, `SearchAutocompleteResult`, `SearchAutocompleteResponse`, `AddressInfoByMapIdRequest`, `AddressInfoByMapIdResponse`, `MapIdAddress`, `MapIdOwner`, `CreatePropertyAddress`, `CreatePropertyOwner`, `CreatePropertyRequest`, `EnsurePropertyByMapIdOptions`.
 
 **Note:** This barrel exports MORE types than `src/index.ts` (includes `LoginRequest`, `TokenPair`, etc. that are not part of the public SDK API).
 
@@ -1394,14 +1411,14 @@ Re-exports **all** types from `../types.js` (31 types total, including those not
 | `properties` | `PropertySearchResponse` (implicit) | Result of `searchProperties({ limit: 5 })` |
 | `firstProperty` | `Property` (implicit) | `properties.results[0]` |
 | `propertyUuid` | `string` | `firstProperty.uuid` |
-| `property` | `Property` (implicit) | Result of `getPropertyById()` |
+| `property` | `Property` (implicit) | Result of `getPropertyByUuid()` |
 | `images` | `PropertyImagesResponse` (implicit) | Result of `getPropertyImages()` |
 | `offers` | `PropertyOffersResponse` (implicit) | Result of `getPropertyOffers()` |
 | `testAddress` | `string` | `'328 Main St, New Canaan, CT'` (hardcoded) |
 | `autocompleteResults` | `SearchAutocompleteResponse` (implicit) | Result of `searchAutocomplete()` |
 | `firstResult` | `SearchAutocompleteResult` (implicit) | `autocompleteResults[0]` |
 | `mapId` | `string \| undefined` | `firstResult.id` |
-| `addressInfo` | `AddressInfoFromMapIdResponse` (implicit) | Result of `getAddressInfoFromMapId()` |
+| `addressInfo` | `AddressInfoByMapIdResponse` (implicit) | Result of `getAddressInfoByMapId()` |
 | `ensuredProperty` | `Property` (implicit) | Result of `ensurePropertyByMapId()` |
 
 #### Steps executed (11 tests)
@@ -1413,11 +1430,11 @@ Re-exports **all** types from `../types.js` (31 types total, including those not
 | 3 | Get dashboard | `getDashboard()` | 1 |
 | 4 | Get dashboard general | `getDashboardGeneral()` | 1 |
 | 5 | Search properties | `searchProperties({ limit: 5 })` | 1 |
-| 6 | Get property by ID | `getPropertyById(uuid)` | 5 (uses first result) |
-| 7 | Get property images | `getPropertyImages(uuid)` | 5 |
-| 8 | Get property offers | `getPropertyOffers(uuid)` | 5 |
+| 6 | Get property by UUID | `getPropertyByUuid(propertyUuid)` | 5 (uses first result) |
+| 7 | Get property images | `getPropertyImages(propertyUuid)` | 5 |
+| 8 | Get property offers | `getPropertyOffers(propertyUuid)` | 5 |
 | 9 | Search autocomplete | `searchAutocomplete(testAddress)` | 1 |
-| 10 | Get address info from map ID | `getAddressInfoFromMapId(mapId)` | 9 |
+| 10 | Get address info from map ID | `getAddressInfoByMapId(mapId)` | 9 |
 | 11 | Ensure property by map ID | `ensurePropertyByMapId(mapId, opts)` | 9 |
 
 **ensurePropertyByMapId options in test:** `{ status: 'New Lead', includeOwner: true }`
@@ -1523,7 +1540,7 @@ Re-exports **all** types from `../types.js` (31 types total, including those not
 | `docs/api-mapping/extracted-endpoints.md` | Markdown | Grouped report with headers, bodies, responses |
 | `docs/api-mapping/endpoints.json` | JSON | Serialized array of `ExtractedEndpoint` |
 
-> **PII warning:** The outputs may contain real emails, UUIDs, and names extracted from the original HAR. See section 9.2 of the main document. Do not publish without sanitizing.
+> **PII warning:** The outputs may contain real emails, UUIDs, and names extracted from the original HAR. See section 10.2 of the main document. Do not publish without sanitizing.
 
 ---
 
@@ -1533,9 +1550,9 @@ Re-exports **all** types from `../types.js` (31 types total, including those not
 
 | Field | Value | Notes |
 |-------|-------|-------|
-| `name` | `@dsanchez.co/reisift-sdk` | Published npm name |
-| `version` | `0.2.0` | Current version |
-| `description` | `TypeScript SDK for the Reisift API` | |
+| `name` | `@reisift/sdk` | Published npm name |
+| `version` | `0.3.0` | Current version |
+| `description` | `TypeScript SDK for the REISift API` | |
 | `type` | `module` | ESM package |
 | `main` | `./dist/index.js` | Main entry point |
 | `types` | `./dist/index.d.ts` | Types entry point |
