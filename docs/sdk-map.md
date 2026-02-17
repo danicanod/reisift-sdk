@@ -1,219 +1,219 @@
 # SDK Map — @dsanchez.co/reisift-sdk
 
 > **Version documented:** 0.2.0
-> **Last updated:** 2026-02-17 (appendices A-G added)
+> **Last updated:** 2026-02-17
 > **Package name:** `@dsanchez.co/reisift-sdk`
 
 ---
 
-## 1. Vision general
+## 1. Overview
 
-Este SDK es un cliente TypeScript **no oficial** para la API de [REISift](https://www.reisift.io) (plataforma de gestion de propiedades para inversores inmobiliarios). Fue construido mediante **reverse engineering** de la web app de REISift (capturas HAR) y documentacion publica limitada.
+This SDK is an **unofficial** TypeScript client for the [REISift](https://www.reisift.io) API (a property management platform for real estate investors). It was built through **reverse engineering** of the REISift web app (HAR captures) and limited public documentation.
 
-**Que es:**
-- Un wrapper tipado sobre los endpoints HTTP descubiertos de REISift.
-- Un punto de entrada unico (`ReisiftClient`) con autenticacion, paginacion y manejo de errores.
+**What it is:**
+- A typed wrapper over discovered REISift HTTP endpoints.
+- A single entry point (`ReisiftClient`) with authentication, pagination, and error handling.
 
-**Que NO es:**
-- No es un SDK oficial de REISift.
-- No cubre todos los endpoints de la plataforma; solo los descubiertos y verificados.
-- No garantiza estabilidad ante cambios de la API privada de REISift.
+**What it is NOT:**
+- Not an official REISift SDK.
+- Does not cover all platform endpoints; only those discovered and verified.
+- Does not guarantee stability against changes to REISift's private API.
 
 ---
 
-## 2. Estructura del repositorio
+## 2. Repository structure
 
 ```
 sdk/
-├── src/                                    # Codigo fuente
-│   ├── index.ts                            # Entry point publico (barrel file)
-│   ├── infrastructure/                     # Implementacion interna
+├── src/                                    # Source code
+│   ├── index.ts                            # Public entry point (barrel file)
+│   ├── infrastructure/                     # Internal implementation
 │   │   ├── index.ts                        # Re-export
 │   │   └── services/
 │   │       ├── index.ts                    # Re-export
-│   │       └── reisift-client.ts           # Clase principal ReisiftClient
-│   ├── external/                           # Contratos publicos (interfaces y tipos)
+│   │       └── reisift-client.ts           # Main ReisiftClient class
+│   ├── external/                           # Public contracts (interfaces and types)
 │   │   ├── index.ts                        # Re-export
 │   │   └── api/
 │   │       ├── index.ts                    # Re-export
 │   │       ├── client.interface.ts         # ReisiftClientInterface
-│   │       ├── types.ts                    # Todos los tipos de la API
+│   │       ├── types.ts                    # All API types
 │   │       └── types/
-│   │           └── index.ts                # Re-export de tipos
-│   └── shared/                             # Utilidades compartidas
+│   │           └── index.ts                # Re-export of types
+│   └── shared/                             # Shared utilities
 │       ├── index.ts                        # Re-export
-│       └── logger.ts                       # Sistema de logging
-├── scripts/                                # Scripts de desarrollo
-│   ├── smoke-test.ts                       # Test de verificacion del SDK
-│   └── parse-har.ts                        # Parser de capturas HAR
-├── docs/                                   # Documentacion
-│   ├── sdk-map.md                          # <-- ESTE ARCHIVO
-│   ├── api-mapping/                        # Documentacion tecnica de API
-│   │   ├── auth.md                         # Flujo de autenticacion descubierto
-│   │   ├── extracted-endpoints.md          # Endpoints extraidos de HAR
-│   │   ├── endpoints.md                    # Definiciones de tipos
-│   │   └── endpoints.json                  # Definiciones de tipos (duplicado)
-│   └── launch/                             # Material de lanzamiento (no trackeado)
-│       └── copywriter-context.md           # Contexto para copywriting
-├── dist/                                   # Build output (generado, no trackeado)
-├── package.json                            # Manifiesto del paquete
-├── tsconfig.json                           # Config base TypeScript
-├── tsconfig.build.json                     # Config de build (excluye tests)
-├── tsconfig.scripts.json                   # Config para scripts/
-└── README.md                               # Documentacion principal
+│       └── logger.ts                       # Logging system
+├── scripts/                                # Development scripts
+│   ├── smoke-test.ts                       # SDK smoke test
+│   └── parse-har.ts                        # HAR capture parser
+├── docs/                                   # Documentation
+│   ├── sdk-map.md                          # <-- THIS FILE
+│   ├── api-mapping/                        # API technical documentation
+│   │   ├── auth.md                         # Discovered authentication flow
+│   │   ├── extracted-endpoints.md          # Endpoints extracted from HAR
+│   │   ├── endpoints.md                    # Type definitions
+│   │   └── endpoints.json                  # Type definitions (duplicate)
+│   └── launch/                             # Launch materials (untracked)
+│       └── copywriter-context.md           # Copywriting context
+├── dist/                                   # Build output (generated, untracked)
+├── package.json                            # Package manifest
+├── tsconfig.json                           # Base TypeScript config
+├── tsconfig.build.json                     # Build config (excludes tests)
+├── tsconfig.scripts.json                   # Config for scripts/
+└── README.md                               # Main documentation
 ```
 
-**Capas de arquitectura:**
+**Architecture layers:**
 
-| Capa | Carpeta | Responsabilidad |
-|------|---------|-----------------|
-| **External** | `src/external/` | Contratos publicos: interfaces y tipos que representan la API de REISift |
-| **Infrastructure** | `src/infrastructure/` | Implementacion: clase `ReisiftClient` con auth, HTTP, y logica de negocio |
-| **Shared** | `src/shared/` | Utilidades: logger configurable por niveles |
+| Layer | Directory | Responsibility |
+|-------|-----------|----------------|
+| **External** | `src/external/` | Public contracts: interfaces and types representing the REISift API |
+| **Infrastructure** | `src/infrastructure/` | Implementation: `ReisiftClient` class with auth, HTTP, and business logic |
+| **Shared** | `src/shared/` | Utilities: level-configurable logger |
 
 ---
 
-## 3. API publica (exports desde `src/index.ts`)
+## 3. Public API (exports from `src/index.ts`)
 
-### 3.1 Clase principal
+### 3.1 Main class
 
-| Export | Tipo | Origen |
+| Export | Kind | Source |
 |--------|------|--------|
 | `ReisiftClient` | class | `src/infrastructure/services/reisift-client.ts` |
 
-### 3.2 Tipos del cliente
+### 3.2 Client types
 
-| Export | Tipo | Origen |
+| Export | Kind | Source |
 |--------|------|--------|
 | `ReisiftClientConfig` | interface | `src/infrastructure/services/reisift-client.ts` |
 | `ReisiftClientInterface` | interface | `src/external/api/client.interface.ts` |
 
-### 3.3 Tipos de la API
+### 3.3 API types
 
-Todos definidos en `src/external/api/types.ts`:
+All defined in `src/external/api/types.ts`:
 
-| Export | Descripcion |
+| Export | Description |
 |--------|-------------|
-| `UserResponse` | Usuario autenticado |
-| `Property` | Propiedad inmobiliaria |
-| `PropertyAddress` | Direccion de propiedad |
-| `PropertyOwner` | Propietario (con phones, emails) |
-| `PropertySearchRequest` | Request de busqueda (limit, offset, ordering, query) |
-| `PropertySearchResponse` | Respuesta paginada de busqueda |
-| `PropertyImage` | Imagen de propiedad |
-| `PropertyImagesResponse` | Respuesta paginada de imagenes |
-| `PropertyOffer` | Oferta sobre propiedad |
-| `PropertyOffersResponse` | Respuesta paginada de ofertas |
-| `DashboardResponse` | Datos del dashboard |
-| `DashboardGeneralResponse` | Estadisticas generales del dashboard |
-| `SearchAutocompleteResult` | Resultado individual de autocomplete |
-| `SearchAutocompleteResponse` | Array de resultados de autocomplete |
-| `AddressInfoFromMapIdResponse` | Info detallada de direccion/propietario desde map ID |
-| `MapIdAddress` | Estructura de direccion desde map ID |
-| `MapIdOwner` | Estructura de propietario desde map ID |
-| `CreatePropertyAddress` | Direccion para crear propiedad |
-| `CreatePropertyOwner` | Propietario para crear propiedad |
-| `CreatePropertyRequest` | Payload para crear propiedad |
-| `EnsurePropertyOptions` | Opciones para `ensurePropertyByMapId()` |
-| `ApiError` | Error estructurado de la API |
-| `Pagination` | Parametros de paginacion genericos |
-| `PaginatedResponse<T>` | Respuesta paginada generica |
+| `UserResponse` | Authenticated user |
+| `Property` | Real estate property |
+| `PropertyAddress` | Property address |
+| `PropertyOwner` | Owner (with phones, emails) |
+| `PropertySearchRequest` | Search request (limit, offset, ordering, query) |
+| `PropertySearchResponse` | Paginated search response |
+| `PropertyImage` | Property image |
+| `PropertyImagesResponse` | Paginated images response |
+| `PropertyOffer` | Property offer |
+| `PropertyOffersResponse` | Paginated offers response |
+| `DashboardResponse` | Dashboard data |
+| `DashboardGeneralResponse` | General dashboard statistics |
+| `SearchAutocompleteResult` | Single autocomplete result |
+| `SearchAutocompleteResponse` | Array of autocomplete results |
+| `AddressInfoFromMapIdResponse` | Detailed address/owner info from map ID |
+| `MapIdAddress` | Address structure from map ID |
+| `MapIdOwner` | Owner structure from map ID |
+| `CreatePropertyAddress` | Address for property creation |
+| `CreatePropertyOwner` | Owner for property creation |
+| `CreatePropertyRequest` | Payload for property creation |
+| `EnsurePropertyOptions` | Options for `ensurePropertyByMapId()` |
+| `ApiError` | Structured API error |
+| `Pagination` | Generic pagination parameters |
+| `PaginatedResponse<T>` | Generic paginated response |
 
 ### 3.4 Logger
 
-| Export | Tipo | Origen |
+| Export | Kind | Source |
 |--------|------|--------|
 | `logger` | const (Logger) | `src/shared/logger.ts` |
 | `Logger` | interface | `src/shared/logger.ts` |
 | `LogContext` | interface | `src/shared/logger.ts` |
 
-### 3.5 Tipos internos (NO exportados publicamente)
+### 3.5 Internal types (NOT publicly exported)
 
-Estos tipos se usan internamente pero no se exponen desde `src/index.ts`:
+These types are used internally but not exposed from `src/index.ts`:
 
-| Tipo | Origen | Uso |
-|------|--------|-----|
-| `LoginRequest` | `types.ts` | Payload de login (email/password) |
-| `TokenPair` | `types.ts` | Par access/refresh del login |
-| `RefreshRequest` | `types.ts` | Payload de refresh |
-| `RefreshResponse` | `types.ts` | Respuesta del refresh |
-| `PropertySearchQuery` | `types.ts` | Query con must/must_not/should |
-| `SearchAutocompleteRequest` | `types.ts` | Payload de autocomplete |
-| `AddressInfoFromMapIdRequest` | `types.ts` | Payload de address-info-from-map-id |
+| Type | Source | Purpose |
+|------|--------|---------|
+| `LoginRequest` | `types.ts` | Login payload (email/password) |
+| `TokenPair` | `types.ts` | Access/refresh token pair from login |
+| `RefreshRequest` | `types.ts` | Refresh payload |
+| `RefreshResponse` | `types.ts` | Refresh response |
+| `PropertySearchQuery` | `types.ts` | Query with must/must_not/should |
+| `SearchAutocompleteRequest` | `types.ts` | Autocomplete payload |
+| `AddressInfoFromMapIdRequest` | `types.ts` | Address-info-from-map-id payload |
 | `AuthMode` | `reisift-client.ts` | `'none' \| 'api_key' \| 'jwt'` |
 
 ---
 
-## 4. Dominios funcionales
+## 4. Functional domains
 
 ### 4.1 Authentication
 
-**Archivos:** `reisift-client.ts` (metodos), `types.ts` (tipos)
+**Files:** `reisift-client.ts` (methods), `types.ts` (types)
 
-| Metodo | Visibilidad | Descripcion |
-|--------|-------------|-------------|
-| `authenticate()` | public | Punto de entrada unico. Detecta modo (API key vs email/password) |
-| `authenticateWithApiKey(apiKey)` | private | Usa apiKey como Bearer, valida con `getCurrentUser()` |
-| `authenticateWithEmailPassword(email, password)` | private | POST a `/api/token/`, almacena access + refresh tokens |
-| `refreshAccessToken()` | private | POST a `/api/token/refresh/`, re-intenta con nuevo access token |
-| `isAuthenticated` | public (getter) | `true` si hay accessToken en memoria |
-| `getTokens()` | public | Devuelve `{ accessToken, refreshToken }` |
-| `getAccessToken()` | public | Devuelve solo el access token |
+| Method | Visibility | Description |
+|--------|------------|-------------|
+| `authenticate()` | public | Single entry point. Detects mode (API key vs email/password) |
+| `authenticateWithApiKey(apiKey)` | private | Uses apiKey as Bearer, validates with `getCurrentUser()` |
+| `authenticateWithEmailPassword(email, password)` | private | POST to `/api/token/`, stores access + refresh tokens |
+| `refreshAccessToken()` | private | POST to `/api/token/refresh/`, retries with new access token |
+| `isAuthenticated` | public (getter) | `true` if accessToken exists in memory |
+| `getTokens()` | public | Returns `{ accessToken, refreshToken }` |
+| `getAccessToken()` | public | Returns only the access token |
 
-**Endpoints usados:**
-- `POST /api/token/` -- Login con email/password
-- `POST /api/token/refresh/` -- Refresh de access token
+**Endpoints used:**
+- `POST /api/token/` -- Login with email/password
+- `POST /api/token/refresh/` -- Access token refresh
 
 ### 4.2 HTTP Client (request engine)
 
-**Archivos:** `reisift-client.ts`
+**Files:** `reisift-client.ts`
 
-| Metodo | Visibilidad | Descripcion |
-|--------|-------------|-------------|
-| `request<T>(endpoint, options?, retryOnUnauthorized?)` | protected | Motor HTTP central. Agrega headers, maneja 401/refresh |
+| Method | Visibility | Description |
+|--------|------------|-------------|
+| `request<T>(endpoint, options?, retryOnUnauthorized?)` | protected | Core HTTP engine. Injects headers, handles 401/refresh |
 
-**Headers inyectados automaticamente:**
+**Automatically injected headers:**
 - `Authorization: Bearer {accessToken}`
 - `Content-Type: application/json`
 - `x-reisift-ui-version: 2022.02.01.7`
 
 **Hosts:**
-- API principal: `https://apiv2.reisift.io` (configurable via `baseUrl` / `REISIFT_BASE_URL`)
-- Servicio de mapas: `https://map.reisift.io` (hardcoded, solo para `searchAutocomplete`)
+- Main API: `https://apiv2.reisift.io` (configurable via `baseUrl` / `REISIFT_BASE_URL`)
+- Map service: `https://map.reisift.io` (hardcoded, only for `searchAutocomplete`)
 
 ### 4.3 User
 
-**Archivos:** `reisift-client.ts`
+**Files:** `reisift-client.ts`
 
-| Metodo | Endpoint | Descripcion |
+| Method | Endpoint | Description |
 |--------|----------|-------------|
-| `getCurrentUser()` | `GET /api/internal/user/` | Obtiene usuario autenticado. Tambien valida API keys |
+| `getCurrentUser()` | `GET /api/internal/user/` | Gets authenticated user. Also validates API keys |
 
 ### 4.4 Dashboard
 
-**Archivos:** `reisift-client.ts`
+**Files:** `reisift-client.ts`
 
-| Metodo | Endpoint | Descripcion |
+| Method | Endpoint | Description |
 |--------|----------|-------------|
-| `getDashboard()` | `GET /api/internal/dashboard/` | Datos del dashboard |
-| `getDashboardGeneral()` | `GET /api/internal/dashboard/general/` | Estadisticas generales |
+| `getDashboard()` | `GET /api/internal/dashboard/` | Dashboard data |
+| `getDashboardGeneral()` | `GET /api/internal/dashboard/general/` | General statistics |
 
 ### 4.5 Properties (CRUD + Search)
 
-**Archivos:** `reisift-client.ts`, `types.ts`
+**Files:** `reisift-client.ts`, `types.ts`
 
-| Metodo | Endpoint | HTTP | Descripcion |
+| Method | Endpoint | HTTP | Description |
 |--------|----------|------|-------------|
-| `searchProperties(request?)` | `/api/internal/property/` | POST (con `x-http-method-override: GET`) | Busqueda con filtros, paginacion, ordenamiento |
-| `getPropertyById(uuid)` | `/api/internal/property/{uuid}/` | GET | Propiedad por UUID |
-| `getPropertyImages(uuid)` | `/api/internal/property/{uuid}/image/` | GET | Imagenes de una propiedad |
-| `getPropertyOffers(uuid)` | `/api/internal/property/{uuid}/offer/` | GET | Ofertas de una propiedad |
-| `createProperty(request)` | `/api/internal/property/` | POST | Crear nueva propiedad |
-| `ensurePropertyByMapId(mapId, options?)` | (compuesto) | -- | Workflow: busca por mapId, retorna existente o crea nueva |
+| `searchProperties(request?)` | `/api/internal/property/` | POST (with `x-http-method-override: GET`) | Search with filters, pagination, ordering |
+| `getPropertyById(uuid)` | `/api/internal/property/{uuid}/` | GET | Property by UUID |
+| `getPropertyImages(uuid)` | `/api/internal/property/{uuid}/image/` | GET | Property images |
+| `getPropertyOffers(uuid)` | `/api/internal/property/{uuid}/offer/` | GET | Property offers |
+| `createProperty(request)` | `/api/internal/property/` | POST | Create new property |
+| `ensurePropertyByMapId(mapId, options?)` | (composite) | -- | Workflow: looks up by mapId, returns existing or creates new |
 
-**Nota sobre `searchProperties`:** Usa `POST` con header `x-http-method-override: GET`, un patron no convencional que REISift usa para enviar queries complejas como body.
+**Note on `searchProperties`:** Uses `POST` with header `x-http-method-override: GET`, an unconventional pattern REISift uses to send complex queries as body.
 
-**Defaults de `searchProperties`:**
+**Defaults for `searchProperties`:**
 - `limit`: 10
 - `offset`: 0
 - `ordering`: `-list_count`
@@ -221,89 +221,89 @@ Estos tipos se usan internamente pero no se exponen desde `src/index.ts`:
 
 ### 4.6 Map / Geocoding
 
-**Archivos:** `reisift-client.ts`, `types.ts`
+**Files:** `reisift-client.ts`, `types.ts`
 
-| Metodo | Endpoint | Host | Descripcion |
+| Method | Endpoint | Host | Description |
 |--------|----------|------|-------------|
-| `searchAutocomplete(search)` | `POST /properties/search-autocomplete/` | `map.reisift.io` | Autocomplete de direcciones |
-| `getAddressInfoFromMapId(mapId)` | `POST /api/internal/property/address-info-from-map-id/` | `apiv2.reisift.io` | Info detallada de direccion + propietario desde map ID |
+| `searchAutocomplete(search)` | `POST /properties/search-autocomplete/` | `map.reisift.io` | Address autocomplete |
+| `getAddressInfoFromMapId(mapId)` | `POST /api/internal/property/address-info-from-map-id/` | `apiv2.reisift.io` | Detailed address + owner info from map ID |
 
-**Nota:** `searchAutocomplete` no usa el metodo `request()` generico; hace su propio `fetch` directo a `map.reisift.io`.
+**Note:** `searchAutocomplete` does not use the generic `request()` method; it makes its own direct `fetch` to `map.reisift.io`.
 
-### 4.7 Error Handling
+### 4.7 Error handling
 
-- Errores HTTP se lanzan como `Error` con formato: `"API request failed: {status} {statusText} - {body}"`.
-- En 401: si modo es `api_key`, error inmediato. Si modo es `jwt`, intenta refresh y re-ejecuta una vez.
-- Tipo `ApiError` exportado para uso del consumidor (no instanciado internamente).
+- HTTP errors are thrown as `Error` with format: `"API request failed: {status} {statusText} - {body}"`.
+- On 401: if mode is `api_key`, error is thrown immediately. If mode is `jwt`, attempts refresh and retries once.
+- The `ApiError` type is exported for consumer use (not instantiated internally).
 
 ### 4.8 Logger
 
-**Archivos:** `src/shared/logger.ts`
+**Files:** `src/shared/logger.ts`
 
-| Metodo | Descripcion |
+| Method | Description |
 |--------|-------------|
-| `logger.debug(msg, context?)` | Solo con `LOG_LEVEL=debug` |
-| `logger.info(msg, context?)` | Default y superior |
+| `logger.debug(msg, context?)` | Only with `LOG_LEVEL=debug` |
+| `logger.info(msg, context?)` | Default and above |
 | `logger.warn(msg, context?)` | Warnings |
-| `logger.error(msg, error?, context?)` | Errores (incluye stack trace) |
+| `logger.error(msg, error?, context?)` | Errors (includes stack trace) |
 
-**Formato de salida:** `[{ISO timestamp}] [{LEVEL}] {message} {JSON context}`
+**Output format:** `[{ISO timestamp}] [{LEVEL}] {message} {JSON context}`
 
-**Configuracion:** Variable de entorno `LOG_LEVEL` (valores: `debug`, `info`, `warn`, `error`; default: `info`).
+**Configuration:** Environment variable `LOG_LEVEL` (values: `debug`, `info`, `warn`, `error`; default: `info`).
 
 ### 4.9 Configuration
 
 **Interface `ReisiftClientConfig`:**
 
-| Campo | Tipo | Default | Descripcion |
+| Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `baseUrl?` | string | `https://apiv2.reisift.io` | URL base de la API |
-| `email?` | string | `REISIFT_EMAIL` env | Email para login |
-| `password?` | string | `REISIFT_PASSWORD` env | Password para login |
-| `apiKey?` | string | `REISIFT_API_KEY` env | API key (prioridad sobre email/password) |
+| `baseUrl?` | string | `https://apiv2.reisift.io` | API base URL |
+| `email?` | string | `REISIFT_EMAIL` env | Email for login |
+| `password?` | string | `REISIFT_PASSWORD` env | Password for login |
+| `apiKey?` | string | `REISIFT_API_KEY` env | API key (takes priority over email/password) |
 
-**Variables de entorno:**
+**Environment variables:**
 
-| Variable | Descripcion |
+| Variable | Description |
 |----------|-------------|
-| `REISIFT_API_KEY` | API key (prioridad) |
-| `REISIFT_EMAIL` | Email para login |
-| `REISIFT_PASSWORD` | Password para login |
-| `REISIFT_BASE_URL` | URL base (default: `https://apiv2.reisift.io`) |
-| `LOG_LEVEL` | Nivel de logging (default: `info`) |
+| `REISIFT_API_KEY` | API key (takes priority) |
+| `REISIFT_EMAIL` | Email for login |
+| `REISIFT_PASSWORD` | Password for login |
+| `REISIFT_BASE_URL` | Base URL (default: `https://apiv2.reisift.io`) |
+| `LOG_LEVEL` | Logging level (default: `info`) |
 
 ---
 
-## 5. Flujos clave
+## 5. Key workflows
 
 ### 5.1 authenticate()
 
 ```mermaid
 flowchart TD
-    Start["authenticate()"] --> CheckApiKey{"apiKey en config\no REISIFT_API_KEY?"}
-    CheckApiKey -->|Si| ApiKeyMode["authenticateWithApiKey()"]
-    CheckApiKey -->|No| CheckEmail{"email + password\nen config o env?"}
+    Start["authenticate()"] --> CheckApiKey{"apiKey in config\nor REISIFT_API_KEY?"}
+    CheckApiKey -->|Yes| ApiKeyMode["authenticateWithApiKey()"]
+    CheckApiKey -->|No| CheckEmail{"email + password\nin config or env?"}
     CheckEmail -->|No| ThrowMissing["throw Error\n'Missing credentials'"]
-    CheckEmail -->|Si| JwtMode["authenticateWithEmailPassword()"]
+    CheckEmail -->|Yes| JwtMode["authenticateWithEmailPassword()"]
 
     ApiKeyMode --> SetToken["accessToken = apiKey\nauthMode = 'api_key'"]
     SetToken --> Validate["getCurrentUser()"]
-    Validate -->|OK| DoneApiKey["Autenticado"]
+    Validate -->|OK| DoneApiKey["Authenticated"]
     Validate -->|Error| ResetApiKey["Reset tokens\nthrow Error"]
 
     JwtMode --> PostLogin["POST /api/token/"]
-    PostLogin -->|OK| StoreTokens["Almacenar access + refresh\nauthMode = 'jwt'"]
+    PostLogin -->|OK| StoreTokens["Store access + refresh\nauthMode = 'jwt'"]
     PostLogin -->|Error| ThrowLogin["throw Error"]
-    StoreTokens --> DoneJwt["Autenticado"]
+    StoreTokens --> DoneJwt["Authenticated"]
 ```
 
-### 5.2 request() — Motor HTTP con retry en 401
+### 5.2 request() — HTTP engine with 401 retry
 
 ```mermaid
 flowchart TD
-    Start["request(endpoint, options)"] --> CheckAuth{"accessToken\nexiste?"}
+    Start["request(endpoint, options)"] --> CheckAuth{"accessToken\nexists?"}
     CheckAuth -->|No| ThrowNotAuth["throw 'Not authenticated'"]
-    CheckAuth -->|Si| DoFetch["fetch(baseUrl + endpoint)\ncon headers inyectados"]
+    CheckAuth -->|Yes| DoFetch["fetch(baseUrl + endpoint)\nwith injected headers"]
 
     DoFetch --> CheckStatus{"response.status"}
     CheckStatus -->|401 + retry=true| CheckMode{"authMode?"}
@@ -312,38 +312,38 @@ flowchart TD
     TryRefresh -->|OK| Retry["request(endpoint, options, retry=false)"]
     TryRefresh -->|Fail| ThrowExpired["throw 'Session expired'"]
 
-    CheckStatus -->|Otro error| ThrowHttp["throw 'API request failed: N'"]
+    CheckStatus -->|Other error| ThrowHttp["throw 'API request failed: N'"]
     CheckStatus -->|OK + JSON| ReturnJson["return response.json()"]
-    CheckStatus -->|OK + otro| ReturnText["return response.text()"]
+    CheckStatus -->|OK + other| ReturnText["return response.text()"]
 ```
 
-### 5.3 ensurePropertyByMapId() — Workflow compuesto
+### 5.3 ensurePropertyByMapId() — Composite workflow
 
 ```mermaid
 flowchart TD
     Start["ensurePropertyByMapId(mapId, options)"] --> Lookup["getAddressInfoFromMapId(mapId)"]
-    Lookup --> CheckExists{"info.saved_property_uuid\nexiste?"}
-    CheckExists -->|Si| GetExisting["getPropertyById(uuid)"]
-    GetExisting --> ReturnExisting["return propiedad existente"]
+    Lookup --> CheckExists{"info.saved_property_uuid\nexists?"}
+    CheckExists -->|Yes| GetExisting["getPropertyById(uuid)"]
+    GetExisting --> ReturnExisting["return existing property"]
 
-    CheckExists -->|No| CheckAddress{"info.address\ndisponible?"}
+    CheckExists -->|No| CheckAddress{"info.address\navailable?"}
     CheckAddress -->|No| ThrowNoAddr["throw 'Address info not returned'"]
-    CheckAddress -->|Si| BuildRequest["Construir CreatePropertyRequest\ndesde info.address"]
+    CheckAddress -->|Yes| BuildRequest["Build CreatePropertyRequest\nfrom info.address"]
 
     BuildRequest --> CheckOwner{"includeOwner &&\ninfo.owner?"}
-    CheckOwner -->|Si| AddOwner["Agregar owner al request"]
-    CheckOwner -->|No| SkipOwner["Sin owner"]
+    CheckOwner -->|Yes| AddOwner["Add owner to request"]
+    CheckOwner -->|No| SkipOwner["No owner"]
     AddOwner --> Create["createProperty(request)"]
     SkipOwner --> Create
-    Create --> ReturnNew["return propiedad nueva"]
+    Create --> ReturnNew["return new property"]
 ```
 
 ---
 
-## 6. Mapa de endpoints implementados
+## 6. Implemented endpoint map
 
-| Metodo del SDK | HTTP | Endpoint | Host |
-|----------------|------|----------|------|
+| SDK Method | HTTP | Endpoint | Host |
+|------------|------|----------|------|
 | `authenticate` (JWT) | POST | `/api/token/` | apiv2.reisift.io |
 | `refreshAccessToken` | POST | `/api/token/refresh/` | apiv2.reisift.io |
 | `getCurrentUser` | GET | `/api/internal/user/` | apiv2.reisift.io |
@@ -357,126 +357,126 @@ flowchart TD
 | `searchAutocomplete` | POST | `/properties/search-autocomplete/` | map.reisift.io |
 | `getAddressInfoFromMapId` | POST | `/api/internal/property/address-info-from-map-id/` | apiv2.reisift.io |
 
-\* `searchProperties` usa POST con header `x-http-method-override: GET`.
+\* `searchProperties` uses POST with header `x-http-method-override: GET`.
 
 ---
 
-## 7. Build, scripts y tooling
+## 7. Build, scripts, and tooling
 
-### Compilacion
+### Compilation
 
-- **Build tool:** TypeScript Compiler (`tsc`) -- sin bundlers.
+- **Build tool:** TypeScript Compiler (`tsc`) -- no bundlers.
 - **Target:** ES2022, module `NodeNext`.
 - **Output:** `dist/` (JS + `.d.ts` + source maps).
 - **Engine:** Node >= 18.
 
 ### Scripts (package.json)
 
-| Script | Comando | Descripcion |
+| Script | Command | Description |
 |--------|---------|-------------|
-| `build` | `tsc -p tsconfig.build.json` | Compila a `dist/` |
-| `build:check` | `tsc --noEmit` | Type-check sin emitir |
-| `typecheck` | `tsc --noEmit && tsc -p tsconfig.scripts.json --noEmit` | Verifica src + scripts |
-| `typecheck:src` | `tsc --noEmit` | Solo src |
-| `typecheck:scripts` | `tsc -p tsconfig.scripts.json --noEmit` | Solo scripts/ |
-| `prepublishOnly` | `npm run build` | Auto-build antes de publicar |
-| `smoke-test` | `tsx scripts/smoke-test.ts` | Test de humo con credenciales reales |
-| `parse-har` | `tsx scripts/parse-har.ts` | Parser de archivos HAR para descubrir endpoints |
+| `build` | `tsc -p tsconfig.build.json` | Compile to `dist/` |
+| `build:check` | `tsc --noEmit` | Type-check without emitting |
+| `typecheck` | `tsc --noEmit && tsc -p tsconfig.scripts.json --noEmit` | Verify src + scripts |
+| `typecheck:src` | `tsc --noEmit` | src only |
+| `typecheck:scripts` | `tsc -p tsconfig.scripts.json --noEmit` | scripts/ only |
+| `prepublishOnly` | `npm run build` | Auto-build before publishing |
+| `smoke-test` | `tsx scripts/smoke-test.ts` | Smoke test with real credentials |
+| `parse-har` | `tsx scripts/parse-har.ts` | HAR file parser for endpoint discovery |
 
-### Configs TypeScript
+### TypeScript configs
 
-| Archivo | Proposito |
-|---------|-----------|
-| `tsconfig.json` | Config base (ES2022, NodeNext, strict, declarations) |
-| `tsconfig.build.json` | Extiende base, excluye tests |
-| `tsconfig.scripts.json` | Para `scripts/`, sin emision |
+| File | Purpose |
+|------|---------|
+| `tsconfig.json` | Base config (ES2022, NodeNext, strict, declarations) |
+| `tsconfig.build.json` | Extends base, excludes tests |
+| `tsconfig.scripts.json` | For `scripts/`, no emit |
 
-### Dependencias
+### Dependencies
 
-| Paquete | Tipo | Uso |
-|---------|------|-----|
-| `typescript` ^5.5.0 | dev | Compilador |
-| `tsx` ^4.7.0 | dev | Ejecucion directa de TS (scripts) |
-| `dotenv` ^17.2.3 | dev | Variables de entorno en scripts |
-| `@types/node` ^22.0.0 | dev | Tipos de Node.js |
+| Package | Kind | Purpose |
+|---------|------|---------|
+| `typescript` ^5.5.0 | dev | Compiler |
+| `tsx` ^4.7.0 | dev | Direct TS execution (scripts) |
+| `dotenv` ^17.2.3 | dev | Environment variables in scripts |
+| `@types/node` ^22.0.0 | dev | Node.js types |
 
-> **Nota:** No hay dependencias de produccion. El SDK usa `fetch` nativo (Node 18+).
+> **Note:** There are no production dependencies. The SDK uses native `fetch` (Node 18+).
 
 ---
 
-## 8. Inventario de documentacion existente
+## 8. Existing documentation inventory
 
-| Archivo | Contenido | Estado |
-|---------|-----------|--------|
-| `README.md` | Quick start, auth, config, API reference, tipos, desarrollo | Trackeado |
-| `docs/sdk-map.md` | Este documento | Trackeado |
-| `docs/api-mapping/auth.md` | Flujo JWT descubierto (RS512, tokens, headers, expiracion) | Trackeado |
-| `docs/api-mapping/extracted-endpoints.md` | Endpoints extraidos de HAR | Trackeado, **contiene PII** |
-| `docs/api-mapping/endpoints.md` | Definiciones de tipos TypeScript | Trackeado |
-| `docs/api-mapping/endpoints.json` | Definiciones de tipos (duplicado) | Trackeado |
-| `docs/launch/copywriter-context.md` | Contexto completo para copywriting de lanzamiento | **No trackeado** |
+| File | Content | Status |
+|------|---------|--------|
+| `README.md` | Quick start, auth, config, API reference, types, development | Tracked |
+| `docs/sdk-map.md` | This document | Tracked |
+| `docs/api-mapping/auth.md` | Discovered JWT flow (RS512, tokens, headers, expiration) | Tracked |
+| `docs/api-mapping/extracted-endpoints.md` | Endpoints extracted from HAR | Tracked, **contains PII** |
+| `docs/api-mapping/endpoints.md` | TypeScript type definitions | Tracked |
+| `docs/api-mapping/endpoints.json` | Type definitions (duplicate) | Tracked |
+| `docs/launch/copywriter-context.md` | Full context for launch copywriting | **Untracked** |
 
-**No existentes:**
+**Not yet created:**
 - CHANGELOG
-- Carpeta `examples/`
-- TypeDoc / documentacion generada
+- `examples/` directory
+- TypeDoc / generated documentation
 
 ---
 
 ## 9. Sensitive / internal notes
 
-> **ATENCION:** Este SDK fue construido por reverse engineering. Esta seccion documenta riesgos y como manejar informacion sensible.
+> **WARNING:** This SDK was built through reverse engineering. This section documents risks and how to handle sensitive information.
 
-### 9.1 Origen de los datos
+### 9.1 Data origin
 
-Los endpoints y tipos fueron descubiertos mediante:
-1. **Capturas HAR** de la web app de REISift (`app.reisift.io`).
-2. **Inspeccion manual** de requests/responses.
-3. **Prueba y error** con diferentes payloads.
+The endpoints and types were discovered through:
+1. **HAR captures** from the REISift web app (`app.reisift.io`).
+2. **Manual inspection** of requests/responses.
+3. **Trial and error** with different payloads.
 
-### 9.2 Archivos con informacion sensible
+### 9.2 Files containing sensitive information
 
-| Archivo | Riesgo | Accion recomendada |
-|---------|--------|--------------------|
-| `docs/api-mapping/extracted-endpoints.md` | Contiene PII literal (emails, UUIDs de usuario, nombres) en query params | No publicar; sanitizar antes de compartir |
-| `docs/api-mapping/endpoints.json` | Contiene tipos que pueden revelar estructura interna | Revisar antes de publicar |
-| `docs/launch/copywriter-context.md` | Referencias a PII en archivos HAR | No trackeado; mantener fuera de git |
-| `scripts/parse-har.ts` | Procesa HAR que puede contener credenciales | No incluir HARs en el repo |
+| File | Risk | Recommended action |
+|------|------|--------------------|
+| `docs/api-mapping/extracted-endpoints.md` | Contains literal PII (emails, user UUIDs, names) in query params | Do not publish; sanitize before sharing |
+| `docs/api-mapping/endpoints.json` | Contains types that may reveal internal structure | Review before publishing |
+| `docs/launch/copywriter-context.md` | References PII from HAR files | Untracked; keep out of git |
+| `scripts/parse-har.ts` | Processes HAR files that may contain credentials | Do not include HAR files in the repo |
 
-### 9.3 Riesgos conocidos
+### 9.3 Known risks
 
-- **Estabilidad de la API:** Los endpoints `/api/internal/*` son API privada de REISift. Pueden cambiar sin previo aviso.
-- **Header `x-reisift-ui-version`:** Actualmente hardcoded como `2022.02.01.7`. Si REISift empieza a validarlo estrictamente, podria romper el SDK.
-- **Tokens en memoria:** Access/refresh tokens se almacenan en memoria, no se persisten. Esto es intencional por seguridad, pero requiere re-autenticacion en cada sesion.
-- **Rate limiting:** No se ha descubierto rate limiting, pero podria existir. El SDK no implementa backoff/retry (salvo el 401).
-- **Logging de PII:** El logger puede imprimir datos sensibles si se usa con `LOG_LEVEL=debug`. Revisar antes de habilitar en produccion.
+- **API stability:** The `/api/internal/*` endpoints are REISift's private API. They may change without notice.
+- **Header `x-reisift-ui-version`:** Currently hardcoded as `2022.02.01.7`. If REISift starts validating it strictly, it could break the SDK.
+- **In-memory tokens:** Access/refresh tokens are stored in memory, not persisted. This is intentional for security, but requires re-authentication on each session.
+- **Rate limiting:** No rate limiting has been discovered, but it may exist. The SDK does not implement backoff/retry (except for 401).
+- **PII in logs:** The logger may print sensitive data when used with `LOG_LEVEL=debug`. Review before enabling in production.
 
-### 9.4 Endpoints descubiertos pero NO implementados
+### 9.4 Discovered but NOT implemented endpoints
 
-Los siguientes endpoints fueron observados en HAR pero no estan implementados en el SDK:
+The following endpoints were observed in HAR but are not implemented in the SDK:
 
-| Endpoint | Metodo | Servicio | Notas |
-|----------|--------|----------|-------|
-| `/notification/unread_count/` | GET | apiv2.reisift.io | Conteo de notificaciones |
-| `/checkNPSShow` | GET | Tercero (NPS widget) | Widget de NPS, no core |
-| `/npsWidget` | GET | Tercero | Widget de NPS, no core |
-| `/g/collect` | POST | Google Analytics | Tracking, no relevante |
-
----
-
-# APPENDICES — Inventario interno exhaustivo
-
-> Lo que sigue es un desglose **linea por linea** de cada archivo fuente del SDK: constantes, campos, funciones, tipos, y artefactos auxiliares. Sirve como referencia interna completa.
+| Endpoint | Method | Service | Notes |
+|----------|--------|---------|-------|
+| `/notification/unread_count/` | GET | apiv2.reisift.io | Notification count |
+| `/checkNPSShow` | GET | Third-party (NPS widget) | NPS widget, not core |
+| `/npsWidget` | GET | Third-party | NPS widget, not core |
+| `/g/collect` | POST | Google Analytics | Tracking, not relevant |
 
 ---
 
-## Appendix A — `ReisiftClient` (inventario completo)
+# APPENDICES — Exhaustive internal inventory
 
-**Archivo:** `src/infrastructure/services/reisift-client.ts` (383 lineas)
+> The following is a **line-by-line** breakdown of every SDK source file: constants, fields, functions, types, and auxiliary artifacts. It serves as a complete internal reference.
+
+---
+
+## Appendix A — `ReisiftClient` (complete inventory)
+
+**File:** `src/infrastructure/services/reisift-client.ts` (383 lines)
 
 ### A.1 Imports
 
-| Import | Tipo | Origen |
+| Import | Kind | Source |
 |--------|------|--------|
 | `ReisiftClientInterface` | type | `../../external/api/client.interface.js` |
 | `TokenPair` | type | `../../external/api/types.js` |
@@ -495,39 +495,39 @@ Los siguientes endpoints fueron observados en HAR pero no estan implementados en
 | `EnsurePropertyOptions` | type | `../../external/api/types.js` |
 | `logger` | value | `../../shared/logger.js` |
 
-### A.2 Constantes de modulo (file-level)
+### A.2 Module-level constants
 
-| Constante | Tipo | Valor | Exportada | Notas |
-|-----------|------|-------|-----------|-------|
-| `DEFAULT_BASE_URL` | `string` | `'https://apiv2.reisift.io'` | No | Fallback si no hay config ni env |
-| `MAP_BASE_URL` | `string` | `'https://map.reisift.io'` | No | Hardcoded; solo para `searchAutocomplete` |
-| `UI_VERSION_HEADER` | `string` | `'2022.02.01.7'` | No | Inyectado en `x-reisift-ui-version` |
+| Constant | Type | Value | Exported | Notes |
+|----------|------|-------|----------|-------|
+| `DEFAULT_BASE_URL` | `string` | `'https://apiv2.reisift.io'` | No | Fallback if no config or env |
+| `MAP_BASE_URL` | `string` | `'https://map.reisift.io'` | No | Hardcoded; only for `searchAutocomplete` |
+| `UI_VERSION_HEADER` | `string` | `'2022.02.01.7'` | No | Injected into `x-reisift-ui-version` |
 
-### A.3 Tipos locales (no exportados)
+### A.3 Local types (not exported)
 
-| Tipo | Definicion | Notas |
+| Type | Definition | Notes |
 |------|------------|-------|
-| `AuthMode` | `'none' \| 'api_key' \| 'jwt'` | Discrimina el modo de autenticacion activo |
+| `AuthMode` | `'none' \| 'api_key' \| 'jwt'` | Discriminates the active authentication mode |
 
-### A.4 Interface exportada: `ReisiftClientConfig`
+### A.4 Exported interface: `ReisiftClientConfig`
 
-| Campo | Tipo | Requerido | Default (resolucion) | Descripcion |
-|-------|------|-----------|----------------------|-------------|
-| `baseUrl` | `string` | No | `config.baseUrl` -> `REISIFT_BASE_URL` -> `DEFAULT_BASE_URL` | URL base de la API |
-| `email` | `string` | No | `config.email` -> `REISIFT_EMAIL` | Email para auth JWT |
-| `password` | `string` | No | `config.password` -> `REISIFT_PASSWORD` | Password para auth JWT |
-| `apiKey` | `string` | No | `config.apiKey` -> `REISIFT_API_KEY` | API key (prioridad sobre email/password) |
+| Field | Type | Required | Default (resolution chain) | Description |
+|-------|------|----------|----------------------------|-------------|
+| `baseUrl` | `string` | No | `config.baseUrl` -> `REISIFT_BASE_URL` -> `DEFAULT_BASE_URL` | API base URL |
+| `email` | `string` | No | `config.email` -> `REISIFT_EMAIL` | Email for JWT auth |
+| `password` | `string` | No | `config.password` -> `REISIFT_PASSWORD` | Password for JWT auth |
+| `apiKey` | `string` | No | `config.apiKey` -> `REISIFT_API_KEY` | API key (takes priority over email/password) |
 
-### A.5 Clase `ReisiftClient` — Campos de instancia
+### A.5 Class `ReisiftClient` — Instance fields
 
-| Campo | Visibilidad | Tipo | Valor inicial | Mutable | Notas |
-|-------|-------------|------|---------------|---------|-------|
-| `config` | `private readonly` | `ReisiftClientConfig` | `config ?? {}` | No | Config pasada al constructor |
-| `baseUrl` | `private readonly` | `string` | resuelto en constructor | No | Ver cadena de fallback en A.4 |
-| `accessToken` | `private` | `string \| null` | `null` | Si | Se asigna en auth, se limpia en errores |
-| `refreshToken` | `private` | `string \| null` | `null` | Si | Solo en modo JWT; null en modo api_key |
-| `isRefreshing` | `private` | `boolean` | `false` | Si | Guard contra refresh concurrente |
-| `authMode` | `private` | `AuthMode` | `'none'` | Si | Cambia en auth; reseteado a `'none'` en fallos |
+| Field | Visibility | Type | Initial value | Mutable | Notes |
+|-------|------------|------|---------------|---------|-------|
+| `config` | `private readonly` | `ReisiftClientConfig` | `config ?? {}` | No | Config passed to constructor |
+| `baseUrl` | `private readonly` | `string` | resolved in constructor | No | See fallback chain in A.4 |
+| `accessToken` | `private` | `string \| null` | `null` | Yes | Set during auth, cleared on errors |
+| `refreshToken` | `private` | `string \| null` | `null` | Yes | Only in JWT mode; null in api_key mode |
+| `isRefreshing` | `private` | `boolean` | `false` | Yes | Guard against concurrent refresh |
+| `authMode` | `private` | `AuthMode` | `'none'` | Yes | Changes during auth; reset to `'none'` on failures |
 
 ### A.6 Constructor
 
@@ -535,12 +535,12 @@ Los siguientes endpoints fueron observados en HAR pero no estan implementados en
 constructor(config?: ReisiftClientConfig)
 ```
 
-**Comportamiento:**
-1. `this.config = config ?? {}` — almacena config o objeto vacio.
-2. `this.baseUrl` — resuelve en orden: `config.baseUrl` -> `process.env['REISIFT_BASE_URL']` -> `DEFAULT_BASE_URL`.
-3. `logger.debug('ReisiftClient initialized', { baseUrl: this.baseUrl })` — log de inicializacion.
+**Behavior:**
+1. `this.config = config ?? {}` — stores config or empty object.
+2. `this.baseUrl` — resolves in order: `config.baseUrl` -> `process.env['REISIFT_BASE_URL']` -> `DEFAULT_BASE_URL`.
+3. `logger.debug('ReisiftClient initialized', { baseUrl: this.baseUrl })` — initialization log.
 
-### A.7 Metodos — Inventario completo
+### A.7 Methods — Complete inventory
 
 #### `authenticate()` — public async
 
@@ -548,13 +548,13 @@ constructor(config?: ReisiftClientConfig)
 async authenticate(): Promise<void>
 ```
 
-| Aspecto | Detalle |
-|---------|---------|
-| **Visibilidad** | `public` |
-| **Retorno** | `Promise<void>` |
-| **Efectos secundarios** | Muta `accessToken`, `refreshToken`, `authMode` |
-| **Puede lanzar** | `Error('Missing authentication credentials...')` si no hay credenciales |
-| **Logica** | 1. Lee `apiKey` de config o env. Si existe -> delega a `authenticateWithApiKey(apiKey)`. 2. Lee `email`+`password` de config o env. Si existen -> delega a `authenticateWithEmailPassword(email, password)`. 3. Si ninguno -> throw. |
+| Aspect | Detail |
+|--------|--------|
+| **Visibility** | `public` |
+| **Returns** | `Promise<void>` |
+| **Side effects** | Mutates `accessToken`, `refreshToken`, `authMode` |
+| **May throw** | `Error('Missing authentication credentials...')` if no credentials |
+| **Logic** | 1. Reads `apiKey` from config or env. If present -> delegates to `authenticateWithApiKey(apiKey)`. 2. Reads `email`+`password` from config or env. If present -> delegates to `authenticateWithEmailPassword(email, password)`. 3. If neither -> throw. |
 
 #### `authenticateWithApiKey(apiKey)` — private async
 
@@ -562,13 +562,13 @@ async authenticate(): Promise<void>
 private async authenticateWithApiKey(apiKey: string): Promise<void>
 ```
 
-| Aspecto | Detalle |
-|---------|---------|
-| **Visibilidad** | `private` |
-| **Parametros** | `apiKey: string` |
-| **Efectos secundarios** | Asigna `accessToken = apiKey`, `authMode = 'api_key'`; resetea ambos en fallo |
-| **Puede lanzar** | `Error('API key authentication failed: ...')` |
-| **Logica** | 1. `logger.info(...)`. 2. Asigna token y modo. 3. Llama `this.getCurrentUser()` para validar. 4. Si OK -> `logger.info(...)`. 5. Si error -> resetea `accessToken = null`, `authMode = 'none'`, re-throws. |
+| Aspect | Detail |
+|--------|--------|
+| **Visibility** | `private` |
+| **Parameters** | `apiKey: string` |
+| **Side effects** | Sets `accessToken = apiKey`, `authMode = 'api_key'`; resets both on failure |
+| **May throw** | `Error('API key authentication failed: ...')` |
+| **Logic** | 1. `logger.info(...)`. 2. Sets token and mode. 3. Calls `this.getCurrentUser()` to validate. 4. If OK -> `logger.info(...)`. 5. If error -> resets `accessToken = null`, `authMode = 'none'`, re-throws. |
 
 #### `authenticateWithEmailPassword(email, password)` — private async
 
@@ -576,16 +576,16 @@ private async authenticateWithApiKey(apiKey: string): Promise<void>
 private async authenticateWithEmailPassword(email: string, password: string): Promise<void>
 ```
 
-| Aspecto | Detalle |
-|---------|---------|
-| **Visibilidad** | `private` |
-| **Parametros** | `email: string`, `password: string` |
+| Aspect | Detail |
+|--------|--------|
+| **Visibility** | `private` |
+| **Parameters** | `email: string`, `password: string` |
 | **Endpoint** | `POST {baseUrl}/api/token/` |
 | **Request body** | `LoginRequest { email, password, remember: true, agree: true }` |
-| **Headers enviados** | `Content-Type: application/json` (sin auth — es login) |
-| **Efectos secundarios** | Asigna `accessToken = tokens.access`, `refreshToken = tokens.refresh`, `authMode = 'jwt'` |
-| **Puede lanzar** | `Error('Authentication failed: Login failed: {status} ...')` |
-| **Logica** | 1. Construye `LoginRequest`. 2. `fetch(POST)`. 3. Si `!response.ok` -> throw con status+body. 4. Parsea JSON como `TokenPair`. 5. Almacena tokens. 6. Asigna `authMode = 'jwt'`. |
+| **Headers sent** | `Content-Type: application/json` (no auth — this is the login request) |
+| **Side effects** | Sets `accessToken = tokens.access`, `refreshToken = tokens.refresh`, `authMode = 'jwt'` |
+| **May throw** | `Error('Authentication failed: Login failed: {status} ...')` |
+| **Logic** | 1. Builds `LoginRequest`. 2. `fetch(POST)`. 3. If `!response.ok` -> throw with status+body. 4. Parses JSON as `TokenPair`. 5. Stores tokens. 6. Sets `authMode = 'jwt'`. |
 
 #### `getCurrentUser()` — public async
 
@@ -593,12 +593,12 @@ private async authenticateWithEmailPassword(email: string, password: string): Pr
 async getCurrentUser(): Promise<UserResponse>
 ```
 
-| Aspecto | Detalle |
-|---------|---------|
-| **Visibilidad** | `public` |
-| **Retorno** | `Promise<UserResponse>` |
+| Aspect | Detail |
+|--------|--------|
+| **Visibility** | `public` |
+| **Returns** | `Promise<UserResponse>` |
 | **Endpoint** | `GET /api/internal/user/` (via `request()`) |
-| **Uso doble** | Metodo publico + validacion interna de API key en `authenticateWithApiKey()` |
+| **Dual use** | Public method + internal API key validation in `authenticateWithApiKey()` |
 
 #### `refreshAccessToken()` — private async
 
@@ -606,16 +606,16 @@ async getCurrentUser(): Promise<UserResponse>
 private async refreshAccessToken(): Promise<boolean>
 ```
 
-| Aspecto | Detalle |
-|---------|---------|
-| **Visibilidad** | `private` |
-| **Retorno** | `Promise<boolean>` — `true` si refresh exitoso, `false` si fallo |
+| Aspect | Detail |
+|--------|--------|
+| **Visibility** | `private` |
+| **Returns** | `Promise<boolean>` — `true` if refresh succeeded, `false` if failed |
 | **Endpoint** | `POST {baseUrl}/api/token/refresh/` |
 | **Request body** | `{ refresh: this.refreshToken }` |
-| **Headers enviados** | `Content-Type: application/json` (sin Bearer — usa refresh token en body) |
-| **Guards** | Retorna `false` inmediatamente si: (a) `authMode === 'api_key'`, (b) `!this.refreshToken`, (c) `this.isRefreshing === true` |
-| **Efectos secundarios** | En exito: actualiza `accessToken` (y `refreshToken` si viene nuevo). En fallo HTTP: resetea `accessToken = null`, `refreshToken = null`, `authMode = 'none'`. Siempre: `this.isRefreshing = false` en `finally`. |
-| **Puede lanzar** | No lanza; atrapa errores y retorna `false` |
+| **Headers sent** | `Content-Type: application/json` (no Bearer — uses refresh token in body) |
+| **Guards** | Returns `false` immediately if: (a) `authMode === 'api_key'`, (b) `!this.refreshToken`, (c) `this.isRefreshing === true` |
+| **Side effects** | On success: updates `accessToken` (and `refreshToken` if a new one is returned). On HTTP failure: resets `accessToken = null`, `refreshToken = null`, `authMode = 'none'`. Always: `this.isRefreshing = false` in `finally`. |
+| **May throw** | Does not throw; catches errors and returns `false` |
 
 #### `request<T>(endpoint, options?, retryOnUnauthorized?)` — protected async
 
@@ -627,15 +627,15 @@ protected async request<T>(
 ): Promise<T>
 ```
 
-| Aspecto | Detalle |
-|---------|---------|
-| **Visibilidad** | `protected` (accesible a subclases) |
-| **Generics** | `T` — tipo de retorno esperado |
-| **Parametros** | `endpoint: string` (path relativo), `options: RequestInit` (default `{}`), `retryOnUnauthorized: boolean` (default `true`) |
-| **URL construida** | `{this.baseUrl}{endpoint}` |
-| **Headers inyectados** | `Content-Type: application/json`, `Authorization: Bearer {accessToken}`, `x-reisift-ui-version: {UI_VERSION_HEADER}`, luego spread de `options.headers` (permite override) |
-| **Flujo de errores** | (1) Sin `accessToken` -> throw `'Not authenticated'`. (2) Status 401 + `retryOnUnauthorized=true`: si `api_key` -> throw `'API key invalid'`; si `jwt` -> intenta refresh, si OK recursion con `retry=false`, si fallo throw `'Session expired'`. (3) Otro error HTTP -> throw con status+body. |
-| **Flujo de exito** | Si content-type incluye `application/json` -> `response.json() as T`. Si no -> `response.text() as unknown as T`. |
+| Aspect | Detail |
+|--------|--------|
+| **Visibility** | `protected` (accessible to subclasses) |
+| **Generics** | `T` — expected return type |
+| **Parameters** | `endpoint: string` (relative path), `options: RequestInit` (default `{}`), `retryOnUnauthorized: boolean` (default `true`) |
+| **Constructed URL** | `{this.baseUrl}{endpoint}` |
+| **Injected headers** | `Content-Type: application/json`, `Authorization: Bearer {accessToken}`, `x-reisift-ui-version: {UI_VERSION_HEADER}`, then spread of `options.headers` (allows override) |
+| **Error flow** | (1) No `accessToken` -> throw `'Not authenticated'`. (2) Status 401 + `retryOnUnauthorized=true`: if `api_key` -> throw `'API key invalid'`; if `jwt` -> attempt refresh, if OK recurse with `retry=false`, if fail throw `'Session expired'`. (3) Other HTTP error -> throw with status+body. |
+| **Success flow** | If content-type includes `application/json` -> `response.json() as T`. Otherwise -> `response.text() as unknown as T`. |
 
 #### `isAuthenticated` — public getter
 
@@ -643,10 +643,10 @@ protected async request<T>(
 get isAuthenticated(): boolean
 ```
 
-| Aspecto | Detalle |
-|---------|---------|
-| **Visibilidad** | `public` (readonly getter) |
-| **Retorno** | `this.accessToken !== null` |
+| Aspect | Detail |
+|--------|--------|
+| **Visibility** | `public` (readonly getter) |
+| **Returns** | `this.accessToken !== null` |
 
 #### `getTokens()` — public
 
@@ -654,10 +654,10 @@ get isAuthenticated(): boolean
 getTokens(): { accessToken: string | null; refreshToken: string | null }
 ```
 
-| Aspecto | Detalle |
-|---------|---------|
-| **Visibilidad** | `public` |
-| **Retorno** | Objeto con ambos tokens actuales |
+| Aspect | Detail |
+|--------|--------|
+| **Visibility** | `public` |
+| **Returns** | Object with both current tokens |
 
 #### `getAccessToken()` — public
 
@@ -665,10 +665,10 @@ getTokens(): { accessToken: string | null; refreshToken: string | null }
 getAccessToken(): string | null
 ```
 
-| Aspecto | Detalle |
-|---------|---------|
-| **Visibilidad** | `public` |
-| **Retorno** | `this.accessToken` |
+| Aspect | Detail |
+|--------|--------|
+| **Visibility** | `public` |
+| **Returns** | `this.accessToken` |
 
 #### `getDashboard()` — public async
 
@@ -676,8 +676,8 @@ getAccessToken(): string | null
 async getDashboard(): Promise<DashboardResponse>
 ```
 
-| Aspecto | Detalle |
-|---------|---------|
+| Aspect | Detail |
+|--------|--------|
 | **Endpoint** | `GET /api/internal/dashboard/` (via `request()`) |
 
 #### `getDashboardGeneral()` — public async
@@ -686,8 +686,8 @@ async getDashboard(): Promise<DashboardResponse>
 async getDashboardGeneral(): Promise<DashboardGeneralResponse>
 ```
 
-| Aspecto | Detalle |
-|---------|---------|
+| Aspect | Detail |
+|--------|--------|
 | **Endpoint** | `GET /api/internal/dashboard/general/` (via `request()`) |
 
 #### `searchProperties(request?)` — public async
@@ -696,14 +696,14 @@ async getDashboardGeneral(): Promise<DashboardGeneralResponse>
 async searchProperties(request: PropertySearchRequest = {}): Promise<PropertySearchResponse>
 ```
 
-| Aspecto | Detalle |
-|---------|---------|
-| **Parametro default** | `{}` |
+| Aspect | Detail |
+|--------|--------|
+| **Default parameter** | `{}` |
 | **Destructuring** | `{ limit = 10, offset = 0, ordering = '-list_count', query }` |
 | **Endpoint** | `POST /api/internal/property/` (via `request()`) |
-| **Headers extra** | `x-http-method-override: GET` |
+| **Extra headers** | `x-http-method-override: GET` |
 | **Body** | `{ limit, offset, ordering, query: query ?? { must: { property_type: 'clean' } } }` |
-| **Default query** | `{ must: { property_type: 'clean' } }` si no se pasa `query` |
+| **Default query** | `{ must: { property_type: 'clean' } }` if no `query` is passed |
 
 #### `getPropertyById(uuid)` — public async
 
@@ -711,8 +711,8 @@ async searchProperties(request: PropertySearchRequest = {}): Promise<PropertySea
 async getPropertyById(uuid: string): Promise<Property>
 ```
 
-| Aspecto | Detalle |
-|---------|---------|
+| Aspect | Detail |
+|--------|--------|
 | **Endpoint** | `GET /api/internal/property/{uuid}/` (via `request()`) |
 
 #### `getPropertyImages(uuid)` — public async
@@ -721,10 +721,10 @@ async getPropertyById(uuid: string): Promise<Property>
 async getPropertyImages(uuid: string): Promise<PropertyImagesResponse>
 ```
 
-| Aspecto | Detalle |
-|---------|---------|
+| Aspect | Detail |
+|--------|--------|
 | **Endpoint** | `GET /api/internal/property/{uuid}/image/?offset=0&limit=999` (via `request()`) |
-| **Paginacion hardcoded** | `offset=0`, `limit=999` (fetches all) |
+| **Hardcoded pagination** | `offset=0`, `limit=999` (fetches all) |
 
 #### `getPropertyOffers(uuid)` — public async
 
@@ -732,10 +732,10 @@ async getPropertyImages(uuid: string): Promise<PropertyImagesResponse>
 async getPropertyOffers(uuid: string): Promise<PropertyOffersResponse>
 ```
 
-| Aspecto | Detalle |
-|---------|---------|
+| Aspect | Detail |
+|--------|--------|
 | **Endpoint** | `GET /api/internal/property/{uuid}/offer/?offset=0&limit=999&ordering=-created` (via `request()`) |
-| **Paginacion hardcoded** | `offset=0`, `limit=999`, `ordering=-created` |
+| **Hardcoded pagination** | `offset=0`, `limit=999`, `ordering=-created` |
 
 #### `searchAutocomplete(search)` — public async
 
@@ -743,15 +743,15 @@ async getPropertyOffers(uuid: string): Promise<PropertyOffersResponse>
 async searchAutocomplete(search: string): Promise<SearchAutocompleteResponse>
 ```
 
-| Aspecto | Detalle |
-|---------|---------|
-| **NO usa `request()`** | Hace `fetch` directo a `MAP_BASE_URL` |
+| Aspect | Detail |
+|--------|--------|
+| **Does NOT use `request()`** | Makes a direct `fetch` to `MAP_BASE_URL` |
 | **URL** | `https://map.reisift.io/properties/search-autocomplete/` |
 | **Headers** | `Content-Type: application/json`, `Authorization: Bearer {accessToken}`, `x-reisift-ui-version: {UI_VERSION_HEADER}` |
 | **Body** | `{ search }` |
-| **Guard** | Verifica `this.accessToken` antes; throw si null |
-| **Response parsing** | Parsea como `{ data: SearchAutocompleteResponse }`, retorna `.data` |
-| **Puede lanzar** | `Error('Not authenticated...')`, `Error('Search autocomplete failed: ...')` |
+| **Guard** | Checks `this.accessToken` first; throws if null |
+| **Response parsing** | Parses as `{ data: SearchAutocompleteResponse }`, returns `.data` |
+| **May throw** | `Error('Not authenticated...')`, `Error('Search autocomplete failed: ...')` |
 
 #### `getAddressInfoFromMapId(mapId)` — public async
 
@@ -759,8 +759,8 @@ async searchAutocomplete(search: string): Promise<SearchAutocompleteResponse>
 async getAddressInfoFromMapId(mapId: string): Promise<AddressInfoFromMapIdResponse>
 ```
 
-| Aspecto | Detalle |
-|---------|---------|
+| Aspect | Detail |
+|--------|--------|
 | **Endpoint** | `POST /api/internal/property/address-info-from-map-id/` (via `request()`) |
 | **Body** | `{ map_id: mapId }` |
 
@@ -770,8 +770,8 @@ async getAddressInfoFromMapId(mapId: string): Promise<AddressInfoFromMapIdRespon
 async createProperty(request: CreatePropertyRequest): Promise<Property>
 ```
 
-| Aspecto | Detalle |
-|---------|---------|
+| Aspect | Detail |
+|--------|--------|
 | **Endpoint** | `POST /api/internal/property/` (via `request()`) |
 | **Body** | `JSON.stringify(request)` |
 | **Logging** | `logger.debug('Creating property', { address: request.address })` |
@@ -782,61 +782,61 @@ async createProperty(request: CreatePropertyRequest): Promise<Property>
 async ensurePropertyByMapId(mapId: string, options: EnsurePropertyOptions = {}): Promise<Property>
 ```
 
-| Aspecto | Detalle |
-|---------|---------|
-| **Metodos internos llamados** | `getAddressInfoFromMapId(mapId)`, `getPropertyById(uuid)` (si existe), `createProperty(request)` (si no existe) |
-| **Parametro default** | `options = {}` |
-| **Destructuring de options** | `{ includeOwner = true, ...createOptions }` |
-| **Puede lanzar** | `Error('Address info not returned from map ID lookup')` si `!info.address` |
-| **Logica de owner** | Si `includeOwner && info.owner` -> agrega `owner` al request. Si `info.owner.address` -> agrega `owner.address` tambien. |
-| **Campos mapeados address** | `street`, `city`, `state`, `postal_code` (con fallback `?? ''`), `country` (sin fallback) |
-| **Campos mapeados owner** | `first_name`, `last_name`, `company` |
-| **Campos mapeados owner.address** | Igual que address principal |
-| **createOptions spread** | `assigned_to`, `status`, `lists`, `tags`, `notes` se pasan directamente al `CreatePropertyRequest` |
+| Aspect | Detail |
+|--------|--------|
+| **Internal methods called** | `getAddressInfoFromMapId(mapId)`, `getPropertyById(uuid)` (if exists), `createProperty(request)` (if not) |
+| **Default parameter** | `options = {}` |
+| **Options destructuring** | `{ includeOwner = true, ...createOptions }` |
+| **May throw** | `Error('Address info not returned from map ID lookup')` if `!info.address` |
+| **Owner logic** | If `includeOwner && info.owner` -> adds `owner` to request. If `info.owner.address` -> adds `owner.address` too. |
+| **Mapped address fields** | `street`, `city`, `state`, `postal_code` (with fallback `?? ''`), `country` (no fallback) |
+| **Mapped owner fields** | `first_name`, `last_name`, `company` |
+| **Mapped owner.address fields** | Same as main address |
+| **createOptions spread** | `assigned_to`, `status`, `lists`, `tags`, `notes` are passed directly to `CreatePropertyRequest` |
 
-### A.8 Tabla resumen: metodo -> endpoint -> headers extra -> errores posibles
+### A.8 Summary table: method -> endpoint -> extra headers -> possible errors
 
-| Metodo | HTTP | Endpoint | Host | Headers extra | Errores posibles |
-|--------|------|----------|------|---------------|------------------|
-| `authenticateWithEmailPassword` | POST | `/api/token/` | apiv2 | (ninguno extra) | `'Authentication failed: Login failed: ...'` |
-| `refreshAccessToken` | POST | `/api/token/refresh/` | apiv2 | (ninguno extra) | (no lanza; retorna false) |
-| `getCurrentUser` | GET | `/api/internal/user/` | apiv2 | (ninguno) | via `request()` |
-| `getDashboard` | GET | `/api/internal/dashboard/` | apiv2 | (ninguno) | via `request()` |
-| `getDashboardGeneral` | GET | `/api/internal/dashboard/general/` | apiv2 | (ninguno) | via `request()` |
+| Method | HTTP | Endpoint | Host | Extra headers | Possible errors |
+|--------|------|----------|------|---------------|-----------------|
+| `authenticateWithEmailPassword` | POST | `/api/token/` | apiv2 | (none) | `'Authentication failed: Login failed: ...'` |
+| `refreshAccessToken` | POST | `/api/token/refresh/` | apiv2 | (none) | (does not throw; returns false) |
+| `getCurrentUser` | GET | `/api/internal/user/` | apiv2 | (none) | via `request()` |
+| `getDashboard` | GET | `/api/internal/dashboard/` | apiv2 | (none) | via `request()` |
+| `getDashboardGeneral` | GET | `/api/internal/dashboard/general/` | apiv2 | (none) | via `request()` |
 | `searchProperties` | POST | `/api/internal/property/` | apiv2 | `x-http-method-override: GET` | via `request()` |
-| `getPropertyById` | GET | `/api/internal/property/{uuid}/` | apiv2 | (ninguno) | via `request()` |
-| `getPropertyImages` | GET | `/api/internal/property/{uuid}/image/` | apiv2 | (ninguno) | via `request()` |
-| `getPropertyOffers` | GET | `/api/internal/property/{uuid}/offer/` | apiv2 | (ninguno) | via `request()` |
-| `searchAutocomplete` | POST | `/properties/search-autocomplete/` | map | (ninguno extra) | `'Not authenticated...'`, `'Search autocomplete failed: ...'` |
-| `getAddressInfoFromMapId` | POST | `/api/internal/property/address-info-from-map-id/` | apiv2 | (ninguno) | via `request()` |
-| `createProperty` | POST | `/api/internal/property/` | apiv2 | (ninguno) | via `request()` |
-| `ensurePropertyByMapId` | (compuesto) | (multiples) | apiv2 | (ninguno) | `'Address info not returned...'` + delegados |
+| `getPropertyById` | GET | `/api/internal/property/{uuid}/` | apiv2 | (none) | via `request()` |
+| `getPropertyImages` | GET | `/api/internal/property/{uuid}/image/` | apiv2 | (none) | via `request()` |
+| `getPropertyOffers` | GET | `/api/internal/property/{uuid}/offer/` | apiv2 | (none) | via `request()` |
+| `searchAutocomplete` | POST | `/properties/search-autocomplete/` | map | (none) | `'Not authenticated...'`, `'Search autocomplete failed: ...'` |
+| `getAddressInfoFromMapId` | POST | `/api/internal/property/address-info-from-map-id/` | apiv2 | (none) | via `request()` |
+| `createProperty` | POST | `/api/internal/property/` | apiv2 | (none) | via `request()` |
+| `ensurePropertyByMapId` | (composite) | (multiple) | apiv2 | (none) | `'Address info not returned...'` + delegated |
 
 ---
 
 ## Appendix B — `ReisiftClientInterface`
 
-**Archivo:** `src/external/api/client.interface.ts` (85 lineas)
+**File:** `src/external/api/client.interface.ts` (85 lines)
 
 ### B.1 Imports (type-only)
 
-`DashboardResponse`, `DashboardGeneralResponse`, `PropertySearchRequest`, `PropertySearchResponse`, `Property`, `PropertyImagesResponse`, `PropertyOffersResponse`, `SearchAutocompleteResponse`, `AddressInfoFromMapIdResponse`, `UserResponse`, `CreatePropertyRequest`, `EnsurePropertyOptions` — todos desde `./types.js`.
+`DashboardResponse`, `DashboardGeneralResponse`, `PropertySearchRequest`, `PropertySearchResponse`, `Property`, `PropertyImagesResponse`, `PropertyOffersResponse`, `SearchAutocompleteResponse`, `AddressInfoFromMapIdResponse`, `UserResponse`, `CreatePropertyRequest`, `EnsurePropertyOptions` — all from `./types.js`.
 
-### B.2 Miembros de la interfaz (orden de declaracion)
+### B.2 Interface members (declaration order)
 
-| # | Miembro | Firma | JSDoc |
-|---|---------|-------|-------|
+| # | Member | Signature | JSDoc |
+|---|--------|-----------|-------|
 | 1 | `authenticate()` | `(): Promise<void>` | Auth modes: 1. API key, 2. Email/password |
-| 2 | `isAuthenticated` | `readonly boolean` | (sin doc) |
+| 2 | `isAuthenticated` | `readonly boolean` | (no doc) |
 | 3 | `getTokens()` | `(): { accessToken: string \| null; refreshToken: string \| null }` | Useful for persisting session |
 | 4 | `getAccessToken()` | `(): string \| null` | Get current access token |
 | 5 | `getCurrentUser()` | `(): Promise<UserResponse>` | Also validates API key |
-| 6 | `getDashboard()` | `(): Promise<DashboardResponse>` | (sin doc) |
-| 7 | `getDashboardGeneral()` | `(): Promise<DashboardGeneralResponse>` | (sin doc) |
-| 8 | `searchProperties()` | `(request?: PropertySearchRequest): Promise<PropertySearchResponse>` | (sin doc) |
-| 9 | `getPropertyById()` | `(uuid: string): Promise<Property>` | (sin doc) |
-| 10 | `getPropertyImages()` | `(uuid: string): Promise<PropertyImagesResponse>` | (sin doc) |
-| 11 | `getPropertyOffers()` | `(uuid: string): Promise<PropertyOffersResponse>` | (sin doc) |
+| 6 | `getDashboard()` | `(): Promise<DashboardResponse>` | (no doc) |
+| 7 | `getDashboardGeneral()` | `(): Promise<DashboardGeneralResponse>` | (no doc) |
+| 8 | `searchProperties()` | `(request?: PropertySearchRequest): Promise<PropertySearchResponse>` | (no doc) |
+| 9 | `getPropertyById()` | `(uuid: string): Promise<Property>` | (no doc) |
+| 10 | `getPropertyImages()` | `(uuid: string): Promise<PropertyImagesResponse>` | (no doc) |
+| 11 | `getPropertyOffers()` | `(uuid: string): Promise<PropertyOffersResponse>` | (no doc) |
 | 12 | `searchAutocomplete()` | `(search: string): Promise<SearchAutocompleteResponse>` | Uses map.reisift.io |
 | 13 | `getAddressInfoFromMapId()` | `(mapId: string): Promise<AddressInfoFromMapIdResponse>` | Map IDs from searchAutocomplete |
 | 14 | `createProperty()` | `(request: CreatePropertyRequest): Promise<Property>` | Create new property |
@@ -844,224 +844,224 @@ async ensurePropertyByMapId(mapId: string, options: EnsurePropertyOptions = {}):
 
 ---
 
-## Appendix C — `types.ts` (inventario completo de tipos)
+## Appendix C — `types.ts` (complete type inventory)
 
-**Archivo:** `src/external/api/types.ts` (261 lineas)
+**File:** `src/external/api/types.ts` (261 lines)
 
 ### C.1 Auth types
 
 #### `LoginRequest`
 
-| Campo | Tipo | Requerido | Notas |
-|-------|------|-----------|-------|
-| `email` | `string` | Si | |
-| `password` | `string` | Si | |
-| `remember` | `boolean` | No | SDK siempre envia `true` |
-| `agree` | `boolean` | No | SDK siempre envia `true` (TOS acceptance) |
+| Field | Type | Required | Notes |
+|-------|------|----------|-------|
+| `email` | `string` | Yes | |
+| `password` | `string` | Yes | |
+| `remember` | `boolean` | No | SDK always sends `true` |
+| `agree` | `boolean` | No | SDK always sends `true` (TOS acceptance) |
 
 #### `TokenPair`
 
-| Campo | Tipo | Requerido | Notas |
-|-------|------|-----------|-------|
-| `access` | `string` | Si | JWT access token |
-| `refresh` | `string` | Si | JWT refresh token |
+| Field | Type | Required | Notes |
+|-------|------|----------|-------|
+| `access` | `string` | Yes | JWT access token |
+| `refresh` | `string` | Yes | JWT refresh token |
 
 #### `RefreshRequest`
 
-| Campo | Tipo | Requerido | Notas |
-|-------|------|-----------|-------|
-| `refresh` | `string` | Si | Refresh token a renovar |
+| Field | Type | Required | Notes |
+|-------|------|----------|-------|
+| `refresh` | `string` | Yes | Refresh token to renew |
 
 #### `RefreshResponse`
 
-| Campo | Tipo | Requerido | Notas |
-|-------|------|-----------|-------|
-| `access` | `string` | Si | Nuevo access token |
-| `refresh` | `string` | No | Nuevo refresh token (si rotado) |
+| Field | Type | Required | Notes |
+|-------|------|----------|-------|
+| `access` | `string` | Yes | New access token |
+| `refresh` | `string` | No | New refresh token (if rotated) |
 
 ### C.2 Pagination
 
 #### `Pagination`
 
-| Campo | Tipo | Requerido | Notas |
-|-------|------|-----------|-------|
-| `limit` | `number` | No | Tamano de pagina |
-| `offset` | `number` | No | Desplazamiento |
+| Field | Type | Required | Notes |
+|-------|------|----------|-------|
+| `limit` | `number` | No | Page size |
+| `offset` | `number` | No | Offset |
 
 #### `PaginatedResponse<T>` (generic)
 
-| Campo | Tipo | Requerido | Notas |
-|-------|------|-----------|-------|
-| `count` | `number` | Si | Total de resultados |
-| `next` | `string \| null` | Si | URL de la pagina siguiente |
-| `previous` | `string \| null` | Si | URL de la pagina anterior |
-| `results` | `T[]` | Si | Array de resultados |
+| Field | Type | Required | Notes |
+|-------|------|----------|-------|
+| `count` | `number` | Yes | Total results |
+| `next` | `string \| null` | Yes | Next page URL |
+| `previous` | `string \| null` | Yes | Previous page URL |
+| `results` | `T[]` | Yes | Results array |
 
 ### C.3 Dashboard
 
 #### `DashboardResponse`
 
-| Campo | Tipo | Requerido | Notas |
-|-------|------|-----------|-------|
-| `[key: string]` | `unknown` | -- | Index signature; estructura no tipada (opaca) |
+| Field | Type | Required | Notes |
+|-------|------|----------|-------|
+| `[key: string]` | `unknown` | -- | Index signature; opaque (untyped structure) |
 
 #### `DashboardGeneralResponse`
 
-| Campo | Tipo | Requerido | Notas |
-|-------|------|-----------|-------|
-| `[key: string]` | `unknown` | -- | Index signature; estructura no tipada (opaca) |
+| Field | Type | Required | Notes |
+|-------|------|----------|-------|
+| `[key: string]` | `unknown` | -- | Index signature; opaque (untyped structure) |
 
 ### C.4 Property Search
 
 #### `PropertySearchQuery`
 
-| Campo | Tipo | Requerido | Notas |
-|-------|------|-----------|-------|
-| `must` | `Record<string, unknown>` | No | Filtros requeridos (AND) |
-| `must_not` | `Record<string, unknown>` | No | Filtros de exclusion |
-| `should` | `Record<string, unknown>` | No | Filtros opcionales (OR) |
+| Field | Type | Required | Notes |
+|-------|------|----------|-------|
+| `must` | `Record<string, unknown>` | No | Required filters (AND) |
+| `must_not` | `Record<string, unknown>` | No | Exclusion filters |
+| `should` | `Record<string, unknown>` | No | Optional filters (OR) |
 
 #### `PropertySearchRequest`
 
-| Campo | Tipo | Requerido | Default en SDK | Notas |
-|-------|------|-----------|----------------|-------|
-| `limit` | `number` | No | `10` | Tamano de pagina |
-| `offset` | `number` | No | `0` | Desplazamiento |
-| `ordering` | `string` | No | `'-list_count'` | Prefijo `-` = descendente |
-| `query` | `PropertySearchQuery` | No | `{ must: { property_type: 'clean' } }` | Filtros de busqueda |
+| Field | Type | Required | SDK default | Notes |
+|-------|------|----------|-------------|-------|
+| `limit` | `number` | No | `10` | Page size |
+| `offset` | `number` | No | `0` | Offset |
+| `ordering` | `string` | No | `'-list_count'` | Prefix `-` = descending |
+| `query` | `PropertySearchQuery` | No | `{ must: { property_type: 'clean' } }` | Search filters |
 
 ### C.5 Property types
 
 #### `PropertyAddress`
 
-| Campo | Tipo | Requerido | Notas |
-|-------|------|-----------|-------|
-| `full_address` | `string` | No | Direccion completa formateada |
-| `street` | `string` | No | Calle |
-| `city` | `string` | No | Ciudad |
-| `state` | `string` | No | Estado |
-| `zip` | `string` | No | Codigo postal |
-| `county` | `string` | No | Condado |
+| Field | Type | Required | Notes |
+|-------|------|----------|-------|
+| `full_address` | `string` | No | Formatted full address |
+| `street` | `string` | No | Street |
+| `city` | `string` | No | City |
+| `state` | `string` | No | State |
+| `zip` | `string` | No | Postal code |
+| `county` | `string` | No | County |
 
 #### `PropertyOwner`
 
-| Campo | Tipo | Requerido | Notas |
-|-------|------|-----------|-------|
-| `uuid` | `string` | Si | Identificador unico del owner |
-| `first_name` | `string` | No | Nombre |
-| `last_name` | `string` | No | Apellido |
-| `full_name` | `string` | No | Nombre completo formateado |
-| `phones` | `Array<{ uuid: string; phone: string; type?: string }>` | No | Lista de telefonos |
-| `emails` | `Array<{ uuid: string; email: string }>` | No | Lista de emails |
+| Field | Type | Required | Notes |
+|-------|------|----------|-------|
+| `uuid` | `string` | Yes | Unique owner identifier |
+| `first_name` | `string` | No | First name |
+| `last_name` | `string` | No | Last name |
+| `full_name` | `string` | No | Formatted full name |
+| `phones` | `Array<{ uuid: string; phone: string; type?: string }>` | No | Phone list |
+| `emails` | `Array<{ uuid: string; email: string }>` | No | Email list |
 
 #### `Property`
 
-| Campo | Tipo | Requerido | Notas |
-|-------|------|-----------|-------|
-| `uuid` | `string` | Si | Identificador unico |
-| `address` | `PropertyAddress` | No | Direccion |
-| `owners` | `PropertyOwner[]` | No | Array de propietarios |
-| `property_type` | `string` | No | Tipo de propiedad (ej: `'clean'`) |
-| `list_count` | `number` | No | Cantidad de listas en que aparece |
-| `status` | `string` | No | Estado (ej: `'New Lead'`) |
-| `created` | `string` | No | Fecha de creacion ISO |
-| `modified` | `string` | No | Fecha de modificacion ISO |
-| `[key: string]` | `unknown` | -- | Index signature para campos adicionales |
+| Field | Type | Required | Notes |
+|-------|------|----------|-------|
+| `uuid` | `string` | Yes | Unique identifier |
+| `address` | `PropertyAddress` | No | Address |
+| `owners` | `PropertyOwner[]` | No | Array of owners |
+| `property_type` | `string` | No | Property type (e.g., `'clean'`) |
+| `list_count` | `number` | No | Number of lists it appears in |
+| `status` | `string` | No | Status (e.g., `'New Lead'`) |
+| `created` | `string` | No | ISO creation date |
+| `modified` | `string` | No | ISO modification date |
+| `[key: string]` | `unknown` | -- | Index signature for additional fields |
 
 #### `PropertySearchResponse`
 
-| Campo | Tipo | Requerido | Notas |
-|-------|------|-----------|-------|
-| `count` | `number` | Si | Total de propiedades |
-| `next` | `string \| null` | Si | URL siguiente pagina |
-| `previous` | `string \| null` | Si | URL pagina anterior |
-| `results` | `Property[]` | Si | Propiedades de esta pagina |
+| Field | Type | Required | Notes |
+|-------|------|----------|-------|
+| `count` | `number` | Yes | Total properties |
+| `next` | `string \| null` | Yes | Next page URL |
+| `previous` | `string \| null` | Yes | Previous page URL |
+| `results` | `Property[]` | Yes | Properties in this page |
 
 ### C.6 Property Image
 
 #### `PropertyImage`
 
-| Campo | Tipo | Requerido | Notas |
-|-------|------|-----------|-------|
-| `uuid` | `string` | Si | ID de la imagen |
-| `url` | `string` | Si | URL de la imagen full-size |
-| `thumbnail_url` | `string` | No | URL del thumbnail |
-| `created` | `string` | No | Fecha de creacion ISO |
+| Field | Type | Required | Notes |
+|-------|------|----------|-------|
+| `uuid` | `string` | Yes | Image ID |
+| `url` | `string` | Yes | Full-size image URL |
+| `thumbnail_url` | `string` | No | Thumbnail URL |
+| `created` | `string` | No | ISO creation date |
 
 #### `PropertyImagesResponse`
 
-| Campo | Tipo | Requerido | Notas |
-|-------|------|-----------|-------|
-| `count` | `number` | Si | Total de imagenes |
-| `next` | `string \| null` | Si | |
-| `previous` | `string \| null` | Si | |
-| `results` | `PropertyImage[]` | Si | |
+| Field | Type | Required | Notes |
+|-------|------|----------|-------|
+| `count` | `number` | Yes | Total images |
+| `next` | `string \| null` | Yes | |
+| `previous` | `string \| null` | Yes | |
+| `results` | `PropertyImage[]` | Yes | |
 
 ### C.7 Property Offer
 
 #### `PropertyOffer`
 
-| Campo | Tipo | Requerido | Notas |
-|-------|------|-----------|-------|
-| `uuid` | `string` | Si | ID de la oferta |
-| `amount` | `number` | No | Monto de la oferta |
-| `status` | `string` | No | Estado de la oferta |
-| `created` | `string` | No | Fecha de creacion ISO |
+| Field | Type | Required | Notes |
+|-------|------|----------|-------|
+| `uuid` | `string` | Yes | Offer ID |
+| `amount` | `number` | No | Offer amount |
+| `status` | `string` | No | Offer status |
+| `created` | `string` | No | ISO creation date |
 | `[key: string]` | `unknown` | -- | Index signature |
 
 #### `PropertyOffersResponse`
 
-| Campo | Tipo | Requerido | Notas |
-|-------|------|-----------|-------|
-| `count` | `number` | Si | |
-| `next` | `string \| null` | Si | |
-| `previous` | `string \| null` | Si | |
-| `results` | `PropertyOffer[]` | Si | |
+| Field | Type | Required | Notes |
+|-------|------|----------|-------|
+| `count` | `number` | Yes | |
+| `next` | `string \| null` | Yes | |
+| `previous` | `string \| null` | Yes | |
+| `results` | `PropertyOffer[]` | Yes | |
 
 ### C.8 Error type
 
 #### `ApiError`
 
-| Campo | Tipo | Requerido | Notas |
-|-------|------|-----------|-------|
-| `code` | `string` | Si | Codigo de error |
-| `message` | `string` | Si | Mensaje legible |
-| `details` | `unknown` | No | Info adicional |
+| Field | Type | Required | Notes |
+|-------|------|----------|-------|
+| `code` | `string` | Yes | Error code |
+| `message` | `string` | Yes | Human-readable message |
+| `details` | `unknown` | No | Additional information |
 
 ### C.9 User
 
 #### `UserResponse`
 
-| Campo | Tipo | Requerido | Notas |
-|-------|------|-----------|-------|
-| `uuid` | `string` | Si | ID del usuario |
+| Field | Type | Required | Notes |
+|-------|------|----------|-------|
+| `uuid` | `string` | Yes | User ID |
 | `email` | `string` | No | Email |
-| `first_name` | `string` | No | Nombre |
-| `last_name` | `string` | No | Apellido |
-| `account` | `string` | No | UUID de la cuenta/tenant |
+| `first_name` | `string` | No | First name |
+| `last_name` | `string` | No | Last name |
+| `account` | `string` | No | Account/tenant UUID |
 | `[key: string]` | `unknown` | -- | Index signature |
 
 ### C.10 Search Autocomplete
 
 #### `SearchAutocompleteRequest`
 
-| Campo | Tipo | Requerido | Notas |
-|-------|------|-----------|-------|
-| `search` | `string` | Si | Texto de busqueda |
+| Field | Type | Required | Notes |
+|-------|------|----------|-------|
+| `search` | `string` | Yes | Search text |
 
 #### `SearchAutocompleteResult`
 
-| Campo | Tipo | Requerido | Notas |
-|-------|------|-----------|-------|
-| `id` | `string` | No | Puede usarse como `mapId` |
-| `map_id` | `string` | No | ID alternativo del mapa |
-| `address` | `string` | No | Direccion formateada |
-| `city` | `string` | No | Ciudad |
-| `state` | `string` | No | Estado |
-| `zip` | `string` | No | Codigo postal |
-| `county` | `string` | No | Condado |
-| `title` | `string` | No | Titulo para display |
-| `searchType` | `string` | No | Tipo de resultado |
+| Field | Type | Required | Notes |
+|-------|------|----------|-------|
+| `id` | `string` | No | Can be used as `mapId` |
+| `map_id` | `string` | No | Alternative map ID |
+| `address` | `string` | No | Formatted address |
+| `city` | `string` | No | City |
+| `state` | `string` | No | State |
+| `zip` | `string` | No | Postal code |
+| `county` | `string` | No | County |
+| `title` | `string` | No | Display title |
+| `searchType` | `string` | No | Result type |
 | `[key: string]` | `unknown` | -- | Index signature |
 
 #### `SearchAutocompleteResponse`
@@ -1070,107 +1070,107 @@ async ensurePropertyByMapId(mapId: string, options: EnsurePropertyOptions = {}):
 type SearchAutocompleteResponse = SearchAutocompleteResult[]
 ```
 
-Alias de tipo (no interface). Es un array de `SearchAutocompleteResult`.
+Type alias (not an interface). An array of `SearchAutocompleteResult`.
 
 ### C.11 Address Info from Map ID
 
 #### `AddressInfoFromMapIdRequest`
 
-| Campo | Tipo | Requerido | Notas |
-|-------|------|-----------|-------|
-| `map_id` | `string` | Si | Map ID de autocomplete |
+| Field | Type | Required | Notes |
+|-------|------|----------|-------|
+| `map_id` | `string` | Yes | Map ID from autocomplete |
 
 #### `MapIdAddress`
 
-| Campo | Tipo | Requerido | Notas |
-|-------|------|-----------|-------|
+| Field | Type | Required | Notes |
+|-------|------|----------|-------|
 | `street` | `string` | No | |
 | `city` | `string` | No | |
 | `state` | `string` | No | |
-| `postal_code` | `string` | No | Nota: `postal_code`, no `zip` |
+| `postal_code` | `string` | No | Note: `postal_code`, not `zip` |
 | `country` | `string` | No | |
 | `county` | `string` | No | |
-| `latitude` | `number` | No | Coordenada |
-| `longitude` | `number` | No | Coordenada |
-| `vacant` | `boolean` | No | Si la propiedad esta vacante |
-| `invalid_address` | `boolean \| null` | No | Si la direccion es invalida |
-| `utc` | `unknown` | No | Uso desconocido |
-| `active` | `unknown` | No | Uso desconocido |
+| `latitude` | `number` | No | Coordinate |
+| `longitude` | `number` | No | Coordinate |
+| `vacant` | `boolean` | No | Whether the property is vacant |
+| `invalid_address` | `boolean \| null` | No | Whether the address is invalid |
+| `utc` | `unknown` | No | Unknown purpose |
+| `active` | `unknown` | No | Unknown purpose |
 
 #### `MapIdOwner`
 
-| Campo | Tipo | Requerido | Notas |
-|-------|------|-----------|-------|
+| Field | Type | Required | Notes |
+|-------|------|----------|-------|
 | `first_name` | `string` | No | |
 | `last_name` | `string` | No | |
-| `company` | `string \| null` | No | Puede ser null explicitamente |
-| `address` | `MapIdAddress` | No | Direccion del propietario |
+| `company` | `string \| null` | No | Can be explicitly null |
+| `address` | `MapIdAddress` | No | Owner's address |
 
 #### `AddressInfoFromMapIdResponse`
 
-| Campo | Tipo | Requerido | Notas |
-|-------|------|-----------|-------|
-| `address` | `MapIdAddress` | No | Direccion normalizada |
-| `owner` | `MapIdOwner` | No | Info del propietario |
-| `saved_property_uuid` | `string` | No | UUID si ya existe en REISift |
+| Field | Type | Required | Notes |
+|-------|------|----------|-------|
+| `address` | `MapIdAddress` | No | Normalized address |
+| `owner` | `MapIdOwner` | No | Owner information |
+| `saved_property_uuid` | `string` | No | UUID if already exists in REISift |
 | `[key: string]` | `unknown` | -- | Index signature |
 
 ### C.12 Create Property
 
 #### `CreatePropertyAddress`
 
-| Campo | Tipo | Requerido | Notas |
-|-------|------|-----------|-------|
-| `street` | `string` | Si | |
-| `city` | `string` | Si | |
-| `state` | `string` | Si | |
-| `postal_code` | `string` | Si | |
+| Field | Type | Required | Notes |
+|-------|------|----------|-------|
+| `street` | `string` | Yes | |
+| `city` | `string` | Yes | |
+| `state` | `string` | Yes | |
+| `postal_code` | `string` | Yes | |
 | `country` | `string` | No | |
 
 #### `CreatePropertyOwner`
 
-| Campo | Tipo | Requerido | Notas |
-|-------|------|-----------|-------|
+| Field | Type | Required | Notes |
+|-------|------|----------|-------|
 | `first_name` | `string` | No | |
 | `last_name` | `string` | No | |
 | `company` | `string \| null` | No | |
-| `address` | `CreatePropertyAddress` | No | Direccion del propietario |
-| `emails` | `string[]` | No | Lista de emails |
-| `emails_info` | `Record<string, unknown>` | No | Metadata de emails |
-| `primary_email` | `string \| null` | No | Email principal |
-| `phones` | `string[]` | No | Lista de telefonos |
-| `primary_phone` | `string \| null` | No | Telefono principal |
+| `address` | `CreatePropertyAddress` | No | Owner's address |
+| `emails` | `string[]` | No | Email list |
+| `emails_info` | `Record<string, unknown>` | No | Email metadata |
+| `primary_email` | `string \| null` | No | Primary email |
+| `phones` | `string[]` | No | Phone list |
+| `primary_phone` | `string \| null` | No | Primary phone |
 
 #### `CreatePropertyRequest`
 
-| Campo | Tipo | Requerido | Notas |
-|-------|------|-----------|-------|
-| `address` | `CreatePropertyAddress` | Si | Direccion (requerida) |
-| `assigned_to` | `string` | No | UUID del usuario asignado |
-| `status` | `string` | No | Estado (ej: `'Working On It'`, `'New Lead'`) |
-| `lists` | `string[]` | No | Listas a agregar |
-| `tags` | `string[]` | No | Tags a aplicar |
-| `notes` | `string` | No | Notas |
-| `owner` | `CreatePropertyOwner` | No | Info del propietario |
+| Field | Type | Required | Notes |
+|-------|------|----------|-------|
+| `address` | `CreatePropertyAddress` | Yes | Address (required) |
+| `assigned_to` | `string` | No | Assigned user UUID |
+| `status` | `string` | No | Status (e.g., `'Working On It'`, `'New Lead'`) |
+| `lists` | `string[]` | No | Lists to add to |
+| `tags` | `string[]` | No | Tags to apply |
+| `notes` | `string` | No | Notes |
+| `owner` | `CreatePropertyOwner` | No | Owner information |
 
 #### `EnsurePropertyOptions`
 
-| Campo | Tipo | Requerido | Default en SDK | Notas |
-|-------|------|-----------|----------------|-------|
-| `assigned_to` | `string` | No | -- | UUID del usuario |
-| `status` | `string` | No | -- | Estado si se crea |
-| `lists` | `string[]` | No | -- | Listas si se crea |
-| `tags` | `string[]` | No | -- | Tags si se crea |
-| `notes` | `string` | No | -- | Notas si se crea |
-| `includeOwner` | `boolean` | No | `true` | Incluir owner info del map lookup |
+| Field | Type | Required | SDK default | Notes |
+|-------|------|----------|-------------|-------|
+| `assigned_to` | `string` | No | -- | User UUID |
+| `status` | `string` | No | -- | Status if creating |
+| `lists` | `string[]` | No | -- | Lists if creating |
+| `tags` | `string[]` | No | -- | Tags if creating |
+| `notes` | `string` | No | -- | Notes if creating |
+| `includeOwner` | `boolean` | No | `true` | Include owner info from map lookup |
 
 ---
 
-## Appendix D — `logger.ts` (internals completos)
+## Appendix D — `logger.ts` (complete internals)
 
-**Archivo:** `src/shared/logger.ts` (66 lineas)
+**File:** `src/shared/logger.ts` (66 lines)
 
-### D.1 Interfaces exportadas
+### D.1 Exported interfaces
 
 #### `LogContext`
 
@@ -1180,7 +1180,7 @@ export interface LogContext {
 }
 ```
 
-Index signature abierta. Permite pasar cualquier contexto estructurado al logger.
+Open index signature. Allows passing any structured context to the logger.
 
 #### `Logger`
 
@@ -1193,9 +1193,9 @@ export interface Logger {
 }
 ```
 
-**Nota:** `error()` tiene un parametro `error?: Error` adicional que los demas no tienen.
+**Note:** `error()` has an additional `error?: Error` parameter that the other methods do not.
 
-### D.2 Constantes internas (no exportadas)
+### D.2 Internal constants (not exported)
 
 #### `LOG_LEVELS`
 
@@ -1208,9 +1208,9 @@ const LOG_LEVELS = {
 } as const;
 ```
 
-Objeto inmutable (`as const`). Mapea nombre de nivel a prioridad numerica.
+Immutable object (`as const`). Maps level name to numeric priority.
 
-### D.3 Tipos internos (no exportados)
+### D.3 Internal types (not exported)
 
 #### `LogLevel`
 
@@ -1218,7 +1218,7 @@ Objeto inmutable (`as const`). Mapea nombre de nivel a prioridad numerica.
 type LogLevel = keyof typeof LOG_LEVELS;  // 'debug' | 'info' | 'warn' | 'error'
 ```
 
-### D.4 Funciones internas (no exportadas)
+### D.4 Internal functions (not exported)
 
 #### `getLogLevel()`
 
@@ -1226,13 +1226,13 @@ type LogLevel = keyof typeof LOG_LEVELS;  // 'debug' | 'info' | 'warn' | 'error'
 function getLogLevel(): LogLevel
 ```
 
-| Aspecto | Detalle |
-|---------|---------|
-| **Lee** | `process.env['LOG_LEVEL']` |
-| **Normalizacion** | `.toLowerCase()` |
-| **Validacion** | Verifica que el valor este en `LOG_LEVELS` |
+| Aspect | Detail |
+|--------|--------|
+| **Reads** | `process.env['LOG_LEVEL']` |
+| **Normalization** | `.toLowerCase()` |
+| **Validation** | Checks that the value exists in `LOG_LEVELS` |
 | **Default** | `'info'` |
-| **Retorno** | `LogLevel` |
+| **Returns** | `LogLevel` |
 
 #### `shouldLog(level)`
 
@@ -1240,10 +1240,10 @@ function getLogLevel(): LogLevel
 function shouldLog(level: LogLevel): boolean
 ```
 
-| Aspecto | Detalle |
-|---------|---------|
-| **Logica** | `LOG_LEVELS[level] >= LOG_LEVELS[getLogLevel()]` |
-| **Ejemplo** | Si `LOG_LEVEL=warn`, `shouldLog('info')` -> `false`, `shouldLog('warn')` -> `true`, `shouldLog('error')` -> `true` |
+| Aspect | Detail |
+|--------|--------|
+| **Logic** | `LOG_LEVELS[level] >= LOG_LEVELS[getLogLevel()]` |
+| **Example** | If `LOG_LEVEL=warn`, `shouldLog('info')` -> `false`, `shouldLog('warn')` -> `true`, `shouldLog('error')` -> `true` |
 
 #### `formatMessage(level, message, context?)`
 
@@ -1251,43 +1251,43 @@ function shouldLog(level: LogLevel): boolean
 function formatMessage(level: LogLevel, message: string, context?: LogContext): string
 ```
 
-| Aspecto | Detalle |
-|---------|---------|
-| **Formato** | `[{ISO timestamp}] [{LEVEL}] {message} {JSON context}` |
+| Aspect | Detail |
+|--------|--------|
+| **Format** | `[{ISO timestamp}] [{LEVEL}] {message} {JSON context}` |
 | **Timestamp** | `new Date().toISOString()` |
 | **Level** | `level.toUpperCase()` |
-| **Context** | Si presente: ` ${JSON.stringify(context)}`; si no: string vacio |
-| **Ejemplo output** | `[2026-02-17T12:00:00.000Z] [DEBUG] ReisiftClient initialized {"baseUrl":"https://apiv2.reisift.io"}` |
+| **Context** | If present: ` ${JSON.stringify(context)}`; if not: empty string |
+| **Example output** | `[2026-02-17T12:00:00.000Z] [DEBUG] ReisiftClient initialized {"baseUrl":"https://apiv2.reisift.io"}` |
 
-### D.5 Objeto exportado: `logger`
+### D.5 Exported object: `logger`
 
 ```typescript
 export const logger: Logger = { ... }
 ```
 
-Singleton exportado. Implementa `Logger` con 4 metodos:
+Exported singleton. Implements `Logger` with 4 methods:
 
-| Metodo | Console method | Nivel minimo | Comportamiento especial |
-|--------|---------------|--------------|------------------------|
+| Method | Console method | Minimum level | Special behavior |
+|--------|---------------|---------------|------------------|
 | `debug(msg, ctx?)` | `console.debug` | `debug` (0) | Standard |
 | `info(msg, ctx?)` | `console.info` | `info` (1) | Standard |
 | `warn(msg, ctx?)` | `console.warn` | `warn` (2) | Standard |
-| `error(msg, err?, ctx?)` | `console.error` | `error` (3) | Si `error` presente: merge `{ ...context, error: error.message, stack: error.stack }` en el contexto |
+| `error(msg, err?, ctx?)` | `console.error` | `error` (3) | If `error` is present: merges `{ ...context, error: error.message, stack: error.stack }` into context |
 
-### D.6 Tabla de prioridad de niveles
+### D.6 Level priority table
 
-| Nivel | Numerico | `LOG_LEVEL=debug` | `LOG_LEVEL=info` | `LOG_LEVEL=warn` | `LOG_LEVEL=error` |
-|-------|----------|------|------|------|------|
-| `debug` | 0 | Si | No | No | No |
-| `info` | 1 | Si | Si | No | No |
-| `warn` | 2 | Si | Si | Si | No |
-| `error` | 3 | Si | Si | Si | Si |
+| Level | Numeric | `LOG_LEVEL=debug` | `LOG_LEVEL=info` | `LOG_LEVEL=warn` | `LOG_LEVEL=error` |
+|-------|---------|------|------|------|------|
+| `debug` | 0 | Yes | No | No | No |
+| `info` | 1 | Yes | Yes | No | No |
+| `warn` | 2 | Yes | Yes | Yes | No |
+| `error` | 3 | Yes | Yes | Yes | Yes |
 
 ---
 
-## Appendix E — Barrels y re-exports
+## Appendix E — Barrels and re-exports
 
-### E.1 Grafo de re-exports
+### E.1 Re-export graph
 
 ```mermaid
 flowchart TD
@@ -1305,57 +1305,57 @@ flowchart TD
     SharedIndex -->|"logger, Logger, LogContext"| LoggerFile["src/shared/logger.ts"]
 ```
 
-### E.2 Contenido exacto de cada barrel
+### E.2 Exact content of each barrel
 
 #### `src/index.ts` (entry point)
 
-| Linea | Export | Kind | Desde |
-|-------|--------|------|-------|
+| Line | Export | Kind | From |
+|------|--------|------|------|
 | 18 | `ReisiftClient` | value | `./infrastructure/services/reisift-client.js` |
 | 19 | `ReisiftClientConfig` | type | `./infrastructure/services/reisift-client.js` |
 | 22 | `ReisiftClientInterface` | type | `./external/api/client.interface.js` |
-| 25-50 | 22 tipos de API | type | `./external/api/types.js` |
+| 25-50 | 22 API types | type | `./external/api/types.js` |
 | 53 | `logger` | value | `./shared/logger.js` |
 | 54 | `Logger`, `LogContext` | type | `./shared/logger.js` |
 
 #### `src/infrastructure/index.ts`
 
-| Export | Kind | Desde |
-|--------|------|-------|
+| Export | Kind | From |
+|--------|------|------|
 | `ReisiftClient` | value | `./services/reisift-client.js` |
 | `ReisiftClientConfig` | type | `./services/reisift-client.js` |
 
 #### `src/infrastructure/services/index.ts`
 
-| Export | Kind | Desde |
-|--------|------|-------|
+| Export | Kind | From |
+|--------|------|------|
 | `ReisiftClient` | value | `./reisift-client.js` |
 | `ReisiftClientConfig` | type | `./reisift-client.js` |
 
 #### `src/external/index.ts`
 
-| Export | Kind | Desde |
-|--------|------|-------|
+| Export | Kind | From |
+|--------|------|------|
 | `ReisiftClientInterface` | type | `./api/client.interface.js` |
 
 #### `src/external/api/index.ts`
 
-| Export | Kind | Desde |
-|--------|------|-------|
+| Export | Kind | From |
+|--------|------|------|
 | `ReisiftClientInterface` | type | `./client.interface.js` |
 
 #### `src/external/api/types/index.ts`
 
-Re-exporta **todos** los tipos de `../types.js` (31 tipos totales, incluyendo los no exportados publicamente):
+Re-exports **all** types from `../types.js` (31 types total, including those not publicly exported):
 
 `LoginRequest`, `TokenPair`, `RefreshRequest`, `RefreshResponse`, `Pagination`, `PaginatedResponse`, `DashboardResponse`, `DashboardGeneralResponse`, `PropertySearchQuery`, `PropertySearchRequest`, `PropertyAddress`, `PropertyOwner`, `Property`, `PropertySearchResponse`, `PropertyImage`, `PropertyImagesResponse`, `PropertyOffer`, `PropertyOffersResponse`, `ApiError`, `UserResponse`, `SearchAutocompleteRequest`, `SearchAutocompleteResult`, `SearchAutocompleteResponse`, `AddressInfoFromMapIdRequest`, `AddressInfoFromMapIdResponse`, `MapIdAddress`, `MapIdOwner`, `CreatePropertyAddress`, `CreatePropertyOwner`, `CreatePropertyRequest`, `EnsurePropertyOptions`.
 
-**Nota:** Este barrel exporta MAS tipos que `src/index.ts` (incluye `LoginRequest`, `TokenPair`, etc. que no son publicos del SDK).
+**Note:** This barrel exports MORE types than `src/index.ts` (includes `LoginRequest`, `TokenPair`, etc. that are not part of the public SDK API).
 
 #### `src/shared/index.ts`
 
-| Export | Kind | Desde |
-|--------|------|-------|
+| Export | Kind | From |
+|--------|------|------|
 | `logger` | value | `./logger.js` |
 | `Logger` | type | `./logger.js` |
 | `LogContext` | type | `./logger.js` |
@@ -1364,85 +1364,85 @@ Re-exporta **todos** los tipos de `../types.js` (31 tipos totales, incluyendo lo
 
 ## Appendix F — Scripts
 
-### F.1 `scripts/smoke-test.ts` (117 lineas)
+### F.1 `scripts/smoke-test.ts` (117 lines)
 
 **Shebang:** `#!/usr/bin/env tsx`
-**Import:** `dotenv/config` (carga `.env`), `ReisiftClient` (desde src directamente, no desde dist)
+**Imports:** `dotenv/config` (loads `.env`), `ReisiftClient` (from src directly, not from dist)
 
-#### Variables de entorno leidas
+#### Environment variables read
 
-| Variable | Uso |
-|----------|-----|
-| `REISIFT_API_KEY` | Si presente -> modo API key |
-| `REISIFT_EMAIL` | Si presente (con password) -> modo email/password |
-| `REISIFT_PASSWORD` | Requerido junto con email |
+| Variable | Usage |
+|----------|-------|
+| `REISIFT_API_KEY` | If present -> API key mode |
+| `REISIFT_EMAIL` | If present (with password) -> email/password mode |
+| `REISIFT_PASSWORD` | Required together with email |
 
-#### Variables locales
+#### Local variables
 
-| Variable | Tipo | Notas |
+| Variable | Type | Notes |
 |----------|------|-------|
 | `apiKey` | `string \| undefined` | `process.env['REISIFT_API_KEY']` |
 | `email` | `string \| undefined` | `process.env['REISIFT_EMAIL']` |
 | `password` | `string \| undefined` | `process.env['REISIFT_PASSWORD']` |
-| `authMode` | `string` | `'API key'` o `'email/password'` |
-| `client` | `ReisiftClient` | Instancia del cliente |
-| `user` | `UserResponse` (implicit) | Resultado de `getCurrentUser()` |
-| `dashboard` | `DashboardResponse` (implicit) | Resultado de `getDashboard()` |
+| `authMode` | `string` | `'API key'` or `'email/password'` |
+| `client` | `ReisiftClient` | Client instance |
+| `user` | `UserResponse` (implicit) | Result of `getCurrentUser()` |
+| `dashboard` | `DashboardResponse` (implicit) | Result of `getDashboard()` |
 | `dashboardKeys` | `string[]` | `Object.keys(dashboard)` |
-| `general` | `DashboardGeneralResponse` (implicit) | Resultado de `getDashboardGeneral()` |
+| `general` | `DashboardGeneralResponse` (implicit) | Result of `getDashboardGeneral()` |
 | `generalKeys` | `string[]` | `Object.keys(general)` |
-| `properties` | `PropertySearchResponse` (implicit) | Resultado de `searchProperties({ limit: 5 })` |
+| `properties` | `PropertySearchResponse` (implicit) | Result of `searchProperties({ limit: 5 })` |
 | `firstProperty` | `Property` (implicit) | `properties.results[0]` |
 | `propertyUuid` | `string` | `firstProperty.uuid` |
-| `property` | `Property` (implicit) | Resultado de `getPropertyById()` |
-| `images` | `PropertyImagesResponse` (implicit) | Resultado de `getPropertyImages()` |
-| `offers` | `PropertyOffersResponse` (implicit) | Resultado de `getPropertyOffers()` |
+| `property` | `Property` (implicit) | Result of `getPropertyById()` |
+| `images` | `PropertyImagesResponse` (implicit) | Result of `getPropertyImages()` |
+| `offers` | `PropertyOffersResponse` (implicit) | Result of `getPropertyOffers()` |
 | `testAddress` | `string` | `'328 Main St, New Canaan, CT'` (hardcoded) |
-| `autocompleteResults` | `SearchAutocompleteResponse` (implicit) | Resultado de `searchAutocomplete()` |
+| `autocompleteResults` | `SearchAutocompleteResponse` (implicit) | Result of `searchAutocomplete()` |
 | `firstResult` | `SearchAutocompleteResult` (implicit) | `autocompleteResults[0]` |
 | `mapId` | `string \| undefined` | `firstResult.id` |
-| `addressInfo` | `AddressInfoFromMapIdResponse` (implicit) | Resultado de `getAddressInfoFromMapId()` |
-| `ensuredProperty` | `Property` (implicit) | Resultado de `ensurePropertyByMapId()` |
+| `addressInfo` | `AddressInfoFromMapIdResponse` (implicit) | Result of `getAddressInfoFromMapId()` |
+| `ensuredProperty` | `Property` (implicit) | Result of `ensurePropertyByMapId()` |
 
-#### Pasos ejecutados (11 tests)
+#### Steps executed (11 tests)
 
-| # | Test | Metodo SDK | Depende de |
+| # | Test | SDK method | Depends on |
 |---|------|-----------|------------|
 | 1 | Authentication | `authenticate()` | -- |
 | 2 | Get current user | `getCurrentUser()` | 1 |
 | 3 | Get dashboard | `getDashboard()` | 1 |
 | 4 | Get dashboard general | `getDashboardGeneral()` | 1 |
 | 5 | Search properties | `searchProperties({ limit: 5 })` | 1 |
-| 6 | Get property by ID | `getPropertyById(uuid)` | 5 (usa primer resultado) |
+| 6 | Get property by ID | `getPropertyById(uuid)` | 5 (uses first result) |
 | 7 | Get property images | `getPropertyImages(uuid)` | 5 |
 | 8 | Get property offers | `getPropertyOffers(uuid)` | 5 |
 | 9 | Search autocomplete | `searchAutocomplete(testAddress)` | 1 |
 | 10 | Get address info from map ID | `getAddressInfoFromMapId(mapId)` | 9 |
 | 11 | Ensure property by map ID | `ensurePropertyByMapId(mapId, opts)` | 9 |
 
-**Opciones de ensurePropertyByMapId en test:** `{ status: 'New Lead', includeOwner: true }`
+**ensurePropertyByMapId options in test:** `{ status: 'New Lead', includeOwner: true }`
 
-**Comportamiento en fallo:** `process.exit(1)` con mensaje de error.
-**Salida en exito:** `'All smoke tests passed!'` con exit code 0.
+**On failure:** `process.exit(1)` with error message.
+**On success:** `'All smoke tests passed!'` with exit code 0.
 
-### F.2 `scripts/parse-har.ts` (270 lineas)
+### F.2 `scripts/parse-har.ts` (270 lines)
 
 **Shebang:** `#!/usr/bin/env npx ts-node`
-**Imports:** `readFileSync`, `writeFileSync`, `readdirSync` (de `fs`), `join`, `dirname` (de `path`), `fileURLToPath` (de `url`)
+**Imports:** `readFileSync`, `writeFileSync`, `readdirSync` (from `fs`), `join`, `dirname` (from `path`), `fileURLToPath` (from `url`)
 
-#### Constantes de modulo
+#### Module constants
 
-| Constante | Valor | Notas |
-|-----------|-------|-------|
-| `__filename` | `fileURLToPath(import.meta.url)` | ESM compat |
-| `__dirname` | `dirname(__filename)` | ESM compat |
-| `HAR_FILES_DIR` | `join(__dirname, '../har-files')` | Directorio default de HAR files |
+| Constant | Value | Notes |
+|----------|-------|-------|
+| `__filename` | `fileURLToPath(import.meta.url)` | ESM compatibility |
+| `__dirname` | `dirname(__filename)` | ESM compatibility |
+| `HAR_FILES_DIR` | `join(__dirname, '../har-files')` | Default HAR files directory |
 
-#### Interfaces internas (no exportadas)
+#### Internal interfaces (not exported)
 
 ##### `HarEntry`
 
-| Campo | Tipo |
+| Field | Type |
 |-------|------|
 | `request.method` | `string` |
 | `request.url` | `string` |
@@ -1457,73 +1457,73 @@ Re-exporta **todos** los tipos de `../types.js` (31 tipos totales, incluyendo lo
 
 ##### `HarFile`
 
-| Campo | Tipo |
+| Field | Type |
 |-------|------|
 | `log.entries` | `HarEntry[]` |
 
 ##### `ExtractedEndpoint`
 
-| Campo | Tipo |
+| Field | Type |
 |-------|------|
 | `method` | `string` |
 | `url` | `string` |
 | `path` | `string` |
 | `queryParams` | `Record<string, string>` |
 | `requestHeaders` | `Record<string, string>` |
-| `requestBody` | `unknown` (opcional) |
+| `requestBody` | `unknown` (optional) |
 | `responseStatus` | `number` |
-| `responseBody` | `unknown` (opcional) |
+| `responseBody` | `unknown` (optional) |
 | `contentType` | `string` |
 
-#### Funciones
+#### Functions
 
 ##### `parseHarFile(harPath: string): ExtractedEndpoint[]`
 
-| Aspecto | Detalle |
-|---------|---------|
-| **Filtro URL** | Solo URLs que contienen `'reisift'` o `'localhost'` |
-| **Filtro assets** | Excluye `.js`, `.css`, `.png`, `.svg`, `.woff`, `fonts.` |
-| **Dedup** | Por `{method}:{path}` (usando `Set`) |
-| **Headers capturados** | Solo: `authorization` (redactado como `[REDACTED]`), `content-type`, `api-key`, `x-api-key`, y cualquier `x-*` |
-| **Body parsing** | Intenta `JSON.parse`; si falla, usa texto raw |
-| **Response body** | Intenta `JSON.parse`; si falla, trunca a 500 chars |
+| Aspect | Detail |
+|--------|--------|
+| **URL filter** | Only URLs containing `'reisift'` or `'localhost'` |
+| **Asset filter** | Excludes `.js`, `.css`, `.png`, `.svg`, `.woff`, `fonts.` |
+| **Dedup** | By `{method}:{path}` (using `Set`) |
+| **Captured headers** | Only: `authorization` (redacted as `[REDACTED]`), `content-type`, `api-key`, `x-api-key`, and any `x-*` |
+| **Body parsing** | Tries `JSON.parse`; falls back to raw text |
+| **Response body** | Tries `JSON.parse`; falls back to truncated text (500 chars) |
 
 ##### `generateMarkdownReport(endpoints: ExtractedEndpoint[]): string`
 
-| Aspecto | Detalle |
-|---------|---------|
-| **Agrupacion** | Por los primeros 3 segmentos del path |
-| **Secciones por endpoint** | Status, content-type, query params, headers, request body, response sample |
-| **Truncamiento** | Response body > 2000 chars se trunca con `'... (truncated)'` |
+| Aspect | Detail |
+|--------|--------|
+| **Grouping** | By the first 3 path segments |
+| **Sections per endpoint** | Status, content-type, query params, headers, request body, response sample |
+| **Truncation** | Response body > 2000 chars is truncated with `'... (truncated)'` |
 
 ##### `findHarFiles(): string[]`
 
-| Aspecto | Detalle |
-|---------|---------|
-| **Busca en** | `HAR_FILES_DIR` (`../har-files/`) |
-| **Filtro** | Archivos que terminan en `.har` |
-| **Error handling** | Retorna `[]` si el directorio no existe |
+| Aspect | Detail |
+|--------|--------|
+| **Searches in** | `HAR_FILES_DIR` (`../har-files/`) |
+| **Filter** | Files ending in `.har` |
+| **Error handling** | Returns `[]` if directory does not exist |
 
-#### Variables top-level
+#### Top-level variables
 
-| Variable | Tipo | Notas |
+| Variable | Type | Notes |
 |----------|------|-------|
 | `args` | `string[]` | `process.argv.slice(2)` |
-| `harPaths` | `string[]` | Paths a procesar (de CLI args o `findHarFiles()`) |
-| `allEndpoints` | `ExtractedEndpoint[]` | Acumulador de todos los endpoints extraidos |
-| `uniqueEndpoints` | `ExtractedEndpoint[]` | Deduplicados globalmente por `method` + `path` |
-| `report` | `string` | Markdown generado por `generateMarkdownReport()` |
+| `harPaths` | `string[]` | Paths to process (from CLI args or `findHarFiles()`) |
+| `allEndpoints` | `ExtractedEndpoint[]` | Accumulator for all extracted endpoints |
+| `uniqueEndpoints` | `ExtractedEndpoint[]` | Globally deduplicated by `method` + `path` |
+| `report` | `string` | Markdown generated by `generateMarkdownReport()` |
 | `outputPath` | `string` | `join(__dirname, '../docs/api-mapping/extracted-endpoints.md')` |
 | `jsonPath` | `string` | `join(__dirname, '../docs/api-mapping/endpoints.json')` |
 
-#### Outputs generados
+#### Generated outputs
 
-| Archivo | Formato | Contenido |
-|---------|---------|-----------|
-| `docs/api-mapping/extracted-endpoints.md` | Markdown | Reporte agrupado con headers, bodies, responses |
-| `docs/api-mapping/endpoints.json` | JSON | Array de `ExtractedEndpoint` serializado |
+| File | Format | Content |
+|------|--------|---------|
+| `docs/api-mapping/extracted-endpoints.md` | Markdown | Grouped report with headers, bodies, responses |
+| `docs/api-mapping/endpoints.json` | JSON | Serialized array of `ExtractedEndpoint` |
 
-> **Advertencia PII:** Los outputs pueden contener emails, UUIDs, y nombres reales extraidos del HAR original. Ver seccion 9.2 del documento principal. No publicar sin sanitizar.
+> **PII warning:** The outputs may contain real emails, UUIDs, and names extracted from the original HAR. See section 9.2 of the main document. Do not publish without sanitizing.
 
 ---
 
@@ -1531,16 +1531,16 @@ Re-exporta **todos** los tipos de `../types.js` (31 tipos totales, incluyendo lo
 
 ### G.1 `package.json`
 
-| Campo | Valor | Notas |
+| Field | Value | Notes |
 |-------|-------|-------|
-| `name` | `@dsanchez.co/reisift-sdk` | Nombre publicado en npm |
-| `version` | `0.2.0` | Version actual |
+| `name` | `@dsanchez.co/reisift-sdk` | Published npm name |
+| `version` | `0.2.0` | Current version |
 | `description` | `TypeScript SDK for the Reisift API` | |
-| `type` | `module` | Paquete ESM |
-| `main` | `./dist/index.js` | Entry point principal |
-| `types` | `./dist/index.d.ts` | Entry point de tipos |
-| `license` | `ISC` | Licencia permisiva |
-| `author` | `""` | Vacio |
+| `type` | `module` | ESM package |
+| `main` | `./dist/index.js` | Main entry point |
+| `types` | `./dist/index.d.ts` | Types entry point |
+| `license` | `ISC` | Permissive license |
+| `author` | `""` | Empty |
 
 #### `exports` map
 
@@ -1553,7 +1553,7 @@ Re-exporta **todos** los tipos de `../types.js` (31 tipos totales, incluyendo lo
 }
 ```
 
-Un solo export condition: `"."`. Solo soporta ESM import (sin `require`).
+Single export condition: `"."`. Only supports ESM import (no `require`).
 
 #### `files`
 
@@ -1561,7 +1561,7 @@ Un solo export condition: `"."`. Solo soporta ESM import (sin `require`).
 ["dist"]
 ```
 
-Solo el directorio `dist/` se incluye en el paquete publicado.
+Only the `dist/` directory is included in the published package.
 
 #### `engines`
 
@@ -1573,50 +1573,50 @@ Solo el directorio `dist/` se incluye en el paquete publicado.
 
 `reisift`, `api`, `sdk`, `typescript`
 
-#### `scripts` (completos)
+#### `scripts` (complete)
 
-| Script | Comando | Proposito |
-|--------|---------|-----------|
-| `build` | `tsc -p tsconfig.build.json` | Compilar a dist/ |
-| `build:check` | `tsc --noEmit` | Type-check sin emitir archivos |
-| `typecheck` | `tsc --noEmit && tsc -p tsconfig.scripts.json --noEmit` | Verificar src + scripts |
-| `typecheck:src` | `tsc --noEmit` | Solo src/ |
-| `typecheck:scripts` | `tsc -p tsconfig.scripts.json --noEmit` | Solo scripts/ |
-| `prepublishOnly` | `npm run build` | Auto-build antes de `npm publish` |
-| `parse-har` | `tsx scripts/parse-har.ts` | Ejecutar parser de HAR |
-| `smoke-test` | `tsx scripts/smoke-test.ts` | Ejecutar smoke test |
+| Script | Command | Purpose |
+|--------|---------|---------|
+| `build` | `tsc -p tsconfig.build.json` | Compile to dist/ |
+| `build:check` | `tsc --noEmit` | Type-check without emitting files |
+| `typecheck` | `tsc --noEmit && tsc -p tsconfig.scripts.json --noEmit` | Verify src + scripts |
+| `typecheck:src` | `tsc --noEmit` | src/ only |
+| `typecheck:scripts` | `tsc -p tsconfig.scripts.json --noEmit` | scripts/ only |
+| `prepublishOnly` | `npm run build` | Auto-build before `npm publish` |
+| `parse-har` | `tsx scripts/parse-har.ts` | Run HAR parser |
+| `smoke-test` | `tsx scripts/smoke-test.ts` | Run smoke test |
 
 #### `devDependencies`
 
-| Paquete | Version | Proposito |
-|---------|---------|-----------|
-| `@types/node` | `^22.0.0` | Tipos de Node.js para TypeScript |
-| `dotenv` | `^17.2.3` | Cargar `.env` en scripts |
-| `tsx` | `^4.7.0` | Ejecutar TypeScript directamente (scripts) |
-| `typescript` | `^5.5.0` | Compilador TypeScript |
+| Package | Version | Purpose |
+|---------|---------|---------|
+| `@types/node` | `^22.0.0` | Node.js types for TypeScript |
+| `dotenv` | `^17.2.3` | Load `.env` in scripts |
+| `tsx` | `^4.7.0` | Run TypeScript directly (scripts) |
+| `typescript` | `^5.5.0` | TypeScript compiler |
 
-**Dependencias de produccion:** Ninguna. El SDK usa solo `fetch` nativo (Node 18+).
+**Production dependencies:** None. The SDK uses only native `fetch` (Node 18+).
 
-### G.2 `tsconfig.json` (config base)
+### G.2 `tsconfig.json` (base config)
 
-| Opcion | Valor | Notas |
+| Option | Value | Notes |
 |--------|-------|-------|
-| `target` | `ES2022` | Target de compilacion |
-| `module` | `NodeNext` | Sistema de modulos |
-| `moduleResolution` | `NodeNext` | Resolucion de modulos |
-| `lib` | `["ES2022"]` | Librerias disponibles |
-| `strict` | `true` | Modo estricto completo |
-| `esModuleInterop` | `true` | Interop con modulos CommonJS |
-| `skipLibCheck` | `true` | No chequea tipos de node_modules |
+| `target` | `ES2022` | Compilation target |
+| `module` | `NodeNext` | Module system |
+| `moduleResolution` | `NodeNext` | Module resolution |
+| `lib` | `["ES2022"]` | Available libraries |
+| `strict` | `true` | Full strict mode |
+| `esModuleInterop` | `true` | CommonJS module interop |
+| `skipLibCheck` | `true` | Skips type-checking node_modules |
 | `forceConsistentCasingInFileNames` | `true` | Case-sensitive imports |
-| `resolveJsonModule` | `true` | Permite importar .json |
-| `declaration` | `true` | Genera `.d.ts` |
-| `declarationMap` | `true` | Genera `.d.ts.map` |
-| `sourceMap` | `true` | Genera `.js.map` |
-| `outDir` | `./dist` | Directorio de salida |
-| `rootDir` | `./src` | Directorio raiz del codigo |
+| `resolveJsonModule` | `true` | Allows importing .json |
+| `declaration` | `true` | Generates `.d.ts` |
+| `declarationMap` | `true` | Generates `.d.ts.map` |
+| `sourceMap` | `true` | Generates `.js.map` |
+| `outDir` | `./dist` | Output directory |
+| `rootDir` | `./src` | Source root directory |
 
-| Campo | Valor |
+| Field | Value |
 |-------|-------|
 | `include` | `["src/**/*"]` |
 | `exclude` | `["node_modules", "dist"]` |
@@ -1630,21 +1630,21 @@ Solo el directorio `dist/` se incluye en el paquete publicado.
 }
 ```
 
-Extiende la config base. Unica diferencia: excluye archivos de test (`.test.ts`, `.spec.ts`).
+Extends the base config. Only difference: excludes test files (`.test.ts`, `.spec.ts`).
 
 ### G.4 `tsconfig.scripts.json`
 
-| Opcion | Valor | Diferencia vs base |
+| Option | Value | Difference vs base |
 |--------|-------|--------------------|
-| `extends` | `./tsconfig.json` | Hereda todo |
-| `rootDir` | `.` | Cambia de `./src` a raiz (para que `scripts/` sea valido) |
-| `outDir` | `null` | Sin directorio de salida |
-| `declaration` | `false` | No genera `.d.ts` |
-| `declarationMap` | `false` | No genera `.d.ts.map` |
-| `sourceMap` | `false` | No genera `.js.map` |
-| `noEmit` | `true` | Solo type-check, no emite archivos |
+| `extends` | `./tsconfig.json` | Inherits everything |
+| `rootDir` | `.` | Changed from `./src` to root (so `scripts/` is valid) |
+| `outDir` | `null` | No output directory |
+| `declaration` | `false` | Does not generate `.d.ts` |
+| `declarationMap` | `false` | Does not generate `.d.ts.map` |
+| `sourceMap` | `false` | Does not generate `.js.map` |
+| `noEmit` | `true` | Type-check only, no file output |
 
-| Campo | Valor |
+| Field | Value |
 |-------|-------|
 | `include` | `["scripts/**/*"]` |
 | `exclude` | `["node_modules", "dist"]` |
