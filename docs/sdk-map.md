@@ -1,8 +1,8 @@
-# SDK Map — @reisift/sdk
+# SDK Map — @dsanchez.co/reisift-sdk
 
 > **Version documented:** 0.3.0
 > **Last updated:** 2026-02-17
-> **Package name:** `@reisift/sdk`
+> **Package name:** `@dsanchez.co/reisift-sdk`
 
 ---
 
@@ -28,7 +28,7 @@ This section defines the naming rules followed across the SDK. All code, types, 
 | Context | Convention | Examples |
 |---------|-----------|----------|
 | **Product/brand in prose** | `REISift` (official brand casing) | "the REISift API", "REISift web app" |
-| **npm package name** | `@reisift/sdk` | `npm install @reisift/sdk` |
+| **npm package name** | `@dsanchez.co/reisift-sdk` | `npm install @dsanchez.co/reisift-sdk` |
 | **Classes / types / interfaces** | PascalCase, prefixed with `Reisift` only for the top-level client | `ReisiftClient`, `PropertySearchResponse` |
 | **Methods / params / variables** | camelCase | `searchProperties()`, `propertyUuid` |
 | **Boolean options** | camelCase, affirmative | `includeOwner` (not `withOwner` or `include_owner`) |
@@ -1542,7 +1542,7 @@ Generated files are written to `docs/api-mapping/_generated/` which is gitignore
 
 | Field | Value | Notes |
 |-------|-------|-------|
-| `name` | `@reisift/sdk` | Published npm name |
+| `name` | `@dsanchez.co/reisift-sdk` | Published npm name |
 | `version` | `0.3.0` | Current version |
 | `description` | `TypeScript SDK for the REISift API` | |
 | `type` | `module` | ESM package |

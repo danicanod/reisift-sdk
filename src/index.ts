@@ -1,11 +1,11 @@
 /**
- * @reisift/sdk
+ * @dsanchez.co/reisift-sdk
  * 
  * A TypeScript SDK for the REISift API.
  * 
  * @example
  * ```typescript
- * import { ReisiftClient } from '@reisift/sdk';
+ * import { ReisiftClient } from '@dsanchez.co/reisift-sdk';
  * 
  * const client = new ReisiftClient();
  * await client.authenticate();

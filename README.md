@@ -1,17 +1,17 @@
-# @reisift/sdk
+# @dsanchez.co/reisift-sdk
 
 A TypeScript SDK for the [REISift](https://www.reisift.io) API.
 
 ## Installation
 
 ```bash
-npm install @reisift/sdk
+npm install @dsanchez.co/reisift-sdk
 ```
 
 ## Quick Start
 
 ```typescript
-import { ReisiftClient } from '@reisift/sdk';
+import { ReisiftClient } from '@dsanchez.co/reisift-sdk';
 
 // Create the client
 const client = new ReisiftClient();
@@ -157,12 +157,12 @@ import type {
   ApiError,
   Pagination,
   PaginatedResponse,
-} from '@reisift/sdk';
+} from '@dsanchez.co/reisift-sdk';
 ```
 
 ## Breaking changes in v0.3.0
 
-The package has been renamed from `@dsanchez.co/reisift-sdk` to `@reisift/sdk`. Several public methods and types have been renamed for naming consistency:
+Several public methods and types have been renamed for naming consistency:
 
 | Before (v0.2.0) | After (v0.3.0) |
 |------------------|----------------|
