@@ -14,11 +14,13 @@ import type {
   UserResponse,
   CreatePropertyRequest,
   EnsurePropertyByMapIdOptions,
+  FoldersResponse,
 } from '../../external/api/types.js';
 import { logger } from '../../shared/logger.js';
 
 const DEFAULT_BASE_URL = 'https://apiv2.reisift.io';
 const MAP_BASE_URL = 'https://map.reisift.io';
+const MAIL_BASE_URL = 'https://mail.reisift.io';
 const UI_VERSION_HEADER = '2022.02.01.7';
 
 export interface ReisiftClientConfig {
@@ -327,6 +329,28 @@ export class ReisiftClient implements ReisiftClientInterface {
       method: 'POST',
       body: JSON.stringify(request),
     });
+  }
+
+  async getFolders(): Promise<FoldersResponse> {
+    if (!this.accessToken) {
+      throw new Error('Not authenticated. Call authenticate() first.');
+    }
+
+    const response = await fetch(`${MAIL_BASE_URL}/folders/`, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json, text/plain, */*',
+        'Authorization': `Bearer ${this.accessToken}`,
+        'x-reisift-ui-version': UI_VERSION_HEADER,
+      },
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Get folders failed: ${response.status} ${response.statusText} - ${errorText}`);
+    }
+
+    return response.json() as Promise<FoldersResponse>;
   }
 
   async ensurePropertyByMapId(mapId: string, options: EnsurePropertyByMapIdOptions = {}): Promise<Property> {

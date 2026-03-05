@@ -44,6 +44,8 @@ export type {
   CreatePropertyOwner,
   CreatePropertyRequest,
   EnsurePropertyByMapIdOptions,
+  Folder,
+  FoldersResponse,
   ApiError,
   Pagination,
   PaginatedResponse,

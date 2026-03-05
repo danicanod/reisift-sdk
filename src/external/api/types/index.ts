@@ -30,4 +30,6 @@ export type {
   CreatePropertyOwner,
   CreatePropertyRequest,
   EnsurePropertyByMapIdOptions,
+  Folder,
+  FoldersResponse,
 } from '../types.js';

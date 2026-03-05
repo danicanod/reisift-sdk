@@ -11,6 +11,7 @@ import type {
   UserResponse,
   CreatePropertyRequest,
   EnsurePropertyByMapIdOptions,
+  FoldersResponse,
 } from './types.js';
 
 export interface ReisiftClientInterface {
@@ -82,4 +83,10 @@ export interface ReisiftClientInterface {
    * @param options - Optional configuration for property creation
    */
   ensurePropertyByMapId(mapId: string, options?: EnsurePropertyByMapIdOptions): Promise<Property>;
+
+  /**
+   * Get email folders from the mail service.
+   * Uses mail.reisift.io.
+   */
+  getFolders(): Promise<FoldersResponse>;
 }

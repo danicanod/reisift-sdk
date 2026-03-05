@@ -244,6 +244,25 @@ export interface CreatePropertyRequest {
   owner?: CreatePropertyOwner;
 }
 
+// ============================================================================
+// Mail / Folders (mail.reisift.io)
+// ============================================================================
+
+/** Email folder from the mail service */
+export interface Folder {
+  uuid?: string;
+  id?: string;
+  name?: string;
+  display_name?: string;
+  unread_count?: number;
+  total_count?: number;
+  parent_id?: string;
+  [key: string]: unknown;
+}
+
+/** Response from GET /folders/ on mail.reisift.io */
+export type FoldersResponse = Folder[];
+
 /** Options for ensurePropertyByMapId helper */
 export interface EnsurePropertyByMapIdOptions {
   /** UUID of user to assign the property to (if creating) */
